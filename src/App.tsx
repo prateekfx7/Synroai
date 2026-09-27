@@ -12,6 +12,14 @@ import {
   Star,
   Sparkles,
   CheckCircle2,
+  Code2,
+  Terminal,
+  Database,
+  Network,
+  Workflow,
+  Binary,
+  Play,
+  ArrowUpRight,
 } from 'lucide-react';
 
 // Exact SVG Logo component
@@ -48,9 +56,44 @@ const GithubIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' })
 
 export default function App() {
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('annual');
   const [activeTabScreenshot, setActiveTabScreenshot] = useState<'grid' | 'telemetry' | 'consensus'>('grid');
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeTechIndex, setActiveTechIndex] = useState(0);
+  const [isSimulatingPacket, setIsSimulatingPacket] = useState(false);
+  const [packetStep, setPacketStep] = useState(0);
+  const [wordIdx, setWordIdx] = useState(0);
+
+  const rotatingWords = [
+    'autonomous logistics.',
+    'zero-deadlock fleets.',
+    '4D space-time routing.',
+    'decentralized P2P swarms.',
+    'sub-second task bidding.',
+  ];
+
+  // Animated rotating word cycler for hero headline
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setWordIdx((prev) => (prev + 1) % rotatingWords.length);
+    }, 2600);
+    return () => clearInterval(timer);
+  }, [rotatingWords.length]);
+
+  const triggerPacketSimulation = () => {
+    if (isSimulatingPacket) return;
+    setIsSimulatingPacket(true);
+    setPacketStep(0);
+    let current = 0;
+    const interval = setInterval(() => {
+      current++;
+      if (current >= 5) {
+        clearInterval(interval);
+        setTimeout(() => setIsSimulatingPacket(false), 900);
+      } else {
+        setPacketStep(current);
+      }
+    }, 650);
+  };
 
   // Track scroll progress for sleek top indicator
   useEffect(() => {
@@ -67,8 +110,8 @@ export default function App() {
   const navLinks = [
     { label: 'Features', href: '#features' },
     { label: 'How It Works', href: '#how-it-works' },
+    { label: 'Tech Stack', href: '#techstack' },
     { label: 'Showcase', href: '#showcase' },
-    { label: 'Pricing', href: '#pricing' },
     { label: 'FAQ', href: '#faq' },
   ];
 
@@ -161,57 +204,96 @@ export default function App() {
     },
   ];
 
-  const plans = [
+  const techStack = [
     {
-      name: 'Pilot Lab',
-      desc: 'Ideal for academic validation and 3-AMR simulation benchmarking.',
-      price: billingCycle === 'annual' ? '$180' : '$220',
-      period: '/mo',
-      badge: null,
-      features: [
-        '3 Simulated Autonomous AMRs',
-        'A* Routing with Space-Time Reservation',
-        '18×12 Interactive Floor Grid',
-        'P2P Realtime Mesh Bus Simulation',
-        'CSV Telemetry Data Export',
-        'Community Support',
+      id: 'nextjs',
+      category: 'Frontend & App Runtime',
+      name: 'Next.js 14 App Router + TypeScript',
+      icon: Code2,
+      badge: 'Turbopack Core',
+      desc: 'Engineered with React 18 Concurrent Mode and strict TypeScript domain models for zero-runtime crash safety across warehouse missions.',
+      specs: [
+        'React Server Components & Client Hydration',
+        'Strict TS Type Definitions for AMR Vectors & Packets',
+        'Clay UI Custom Glass & Light Design Tokens',
       ],
-      cta: 'Start with Pilot',
-      highlighted: false,
+      codeSnippet: `interface AMRState {\n  id: string;\n  pos: [x: number, y: number];\n  tokens: SpaceTimeToken[];\n  status: 'idle' | 'in_transit' | 'yielding';\n}`,
+      metric: '0ms Latency Hydration',
     },
     {
-      name: 'Warehouse Core',
-      desc: 'Full decentralized fleet deployment with disruption recovery and analytics.',
-      price: billingCycle === 'annual' ? '$450' : '$550',
-      period: '/mo',
-      badge: 'Recommended',
-      features: [
-        'Up to 12 Active AMRs (Scalable)',
-        'Full Dynamic Yielding & Deadlock Resolution',
-        'Interactive Chaos Lab & Motor Fault Injection',
-        'Realtime Consensus Stream & Priority Metrics',
-        'Sub-second Task Reassignment Engine',
-        'Dedicated SLA & Technical Support',
+      id: 'astar',
+      category: 'Pathfinding & Collision Avoidance',
+      name: '4D Space-Time A* Routing Engine',
+      icon: Cpu,
+      badge: 'PS Spec v2.4 Admissible',
+      desc: 'Extends 2D grid pathing into 4D space-time vertices (x, y, t). Reserves time-stamped grid cells to mathematically eliminate head-on edge swaps and intersection collisions.',
+      specs: [
+        'Admissible Manhattan Distance Heuristic',
+        'Temporal Token Reservation Matrix',
+        'Sub-120ms Dynamic Replanning On Pallet Blockages',
       ],
-      cta: 'Deploy Warehouse Core',
-      highlighted: true,
+      codeSnippet: `function solve4DPath(start, goal, tokens) {\n  // Space-time reservation (x, y, t)\n  const openSet = new MinPriorityQueue();\n  return aStarSpaceTime(start, goal, tokens);\n}`,
+      metric: '<120ms Path Solve Time',
     },
     {
-      name: 'Enterprise Grid',
-      desc: 'Custom multi-facility coordination for high-density automated fulfillment centers.',
-      price: 'Custom',
-      period: '',
-      badge: 'Custom Fleet',
-      features: [
-        'Unlimited Physical & Simulated AMRs',
-        'Multi-Floor & Multi-Facility Mesh Bridging',
-        'Custom Priority Heuristics & WMS API Sync',
-        'Dedicated Relay & On-Premise Support',
-        '24/7 Operations Command & VIP Support',
-        'Custom Hardware ROS 2 Bridge',
+      id: 'mesh',
+      category: 'Distributed Peer-to-Peer Consensus',
+      name: 'Supabase Realtime P2P Mesh Bus',
+      icon: Network,
+      badge: 'Zero Single Point of Failure',
+      desc: 'Simulated decentralized contract-net bidding over WebSocket channels. AMRs broadcast mission bids, compute lowest-cost wins, and verify consensus autonomously.',
+      specs: [
+        'Decentralized Bidding & Mission Auctioning',
+        'Heartbeat Anomaly & Motor Disruption Detection',
+        'Automatic Task Reassignment in <120ms',
       ],
-      cta: 'Contact Engineering',
-      highlighted: false,
+      codeSnippet: `meshBus.broadcast('MISSION_BID', {\n  amrId: 'AMR-01',\n  cost: calcCost(task, amrPos, battery),\n  timestamp: Date.now()\n});`,
+      metric: '100% Peer-to-Peer Mesh',
+    },
+    {
+      id: 'priority',
+      category: 'Deterministic Yielding Algorithm',
+      name: 'Deterministic Priority Arbiter',
+      icon: Workflow,
+      badge: 'Zero Deadlocks',
+      desc: 'Resolves head-on and narrow-aisle conflicts with the formula Priority = Urgency + Waiting Time + Battery Risk. Lower-priority AMRs smoothly yield into staging bays.',
+      specs: [
+        'Mathematical Yield Rules for Intersections',
+        'Anti-Starvation Step Increment per Clock Tick',
+        'Safe Re-route into Corridor Passing Bays',
+      ],
+      codeSnippet: `const priority =\n  urgencyWeight * task.urgency +\n  waitingTicks * 0.15 +\n  batteryRiskScore(amr.battery);`,
+      metric: '29% Throughput Gain',
+    },
+    {
+      id: 'canvas',
+      category: 'Simulation Visualization Engine',
+      name: '60 FPS Hardware-Accelerated Grid',
+      icon: Terminal,
+      badge: 'Interactive Clay Canvas',
+      desc: 'Vectorized 18×12 interactive warehouse grid with real-time AMR animated paths, trail tracers, obstacle pallet drops, and instant zoom/pan telemetry.',
+      specs: [
+        'Interactive Pallet Obstacle Placement',
+        'Space-Time Path Tracing & Yield Vectors',
+        'Full Telemetry Stream & CSV Historical Export',
+      ],
+      codeSnippet: `// Render Space-Time trajectory reservations\nctx.strokeStyle = amr.color;\nctx.stroke(trajectoryPath2D);`,
+      metric: '60 FPS Canvas Precision',
+    },
+    {
+      id: 'ros2',
+      category: 'Physical Hardware Bridge',
+      name: 'ROS 2 Humble & Nav2 Micro-Bridge',
+      icon: Binary,
+      badge: 'Industry Standard',
+      desc: 'Standardized JSON telemetry bridges directly to physical autonomous mobile robots running ROS 2 (AgileX, TurtleBot 4, and OTTO Motors).',
+      specs: [
+        'geometry_msgs/Twist & nav_msgs/Odometry Mapping',
+        'Hardware Safety E-Stop & Pallet Lift Protocols',
+        'Edge Micro-ROS & MQTT Gateway Compatibility',
+      ],
+      codeSnippet: `rosNode.publish('/cmd_vel', {\n  linear: { x: amr.speed, y: 0, z: 0 },\n  angular: { z: amr.steeringAngle }\n});`,
+      metric: 'ROS 2 Nav2 Compatible',
     },
   ];
 
@@ -326,9 +408,13 @@ export default function App() {
                 </span>
               </a>
 
-              {/* 2. Headline */}
+              {/* 2. Headline with Animated Rotating Text */}
               <h1 className="text-[1.5rem] sm:text-[2rem] md:text-[2.25rem] leading-[1.15] font-bold text-gray-900 tracking-tight">
-                Simple, smart multi-robot routing made for autonomous logistics.
+                Simple, smart multi-robot routing made for{' '}
+                <span className="text-[#ff334b] inline-block font-extrabold transition-all duration-300 underline decoration-red-200 decoration-2 underline-offset-4">
+                  {rotatingWords[wordIdx]}
+                </span>
+                <span className="inline-block w-0.5 h-6 bg-[#ff334b] ml-1.5 animate-pulse align-middle" />
               </h1>
 
               {/* 3. Subtext */}
@@ -339,7 +425,7 @@ export default function App() {
               {/* 4. Action Buttons */}
               <div className="pt-2 flex items-center gap-3 flex-wrap">
                 <a
-                  href="#pricing"
+                  href="#techstack"
                   className="inline-flex items-center gap-2 text-[13px] font-medium text-white bg-[#ff334b] hover:bg-[#eb283f] rounded-full px-5 py-2.5 transition-all duration-200 group shadow-sm hover:shadow-md active:scale-95"
                 >
                   <span>Launch Live Fleet Console</span>
@@ -744,106 +830,179 @@ export default function App() {
       </section>
 
       {/* ========================================================
-          6. PRICING SECTION (Clean Light Cards, No Dark Screen)
+          6. TECH STACK & ARCHITECTURE (HOW IT WAS BUILT - ANIMATED SCROLL SECTION)
           ======================================================== */}
-      <section id="pricing" className="py-20 sm:py-28 px-4 sm:px-8 max-w-[1360px] mx-auto">
-        <div className="text-center max-w-xl mx-auto mb-12">
-          <span className="text-xs font-bold text-[#ff334b] uppercase tracking-wider block mb-2">
-            Predictable Pricing
-          </span>
-          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-4">
-            Transparent plans for labs to commercial grids
+      <section id="techstack" className="py-20 sm:py-28 px-4 sm:px-8 max-w-[1360px] mx-auto scroll-mt-12">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-semibold mb-3 shadow-2xs">
+            <Terminal className="w-3.5 h-3.5 text-[#ff334b]" />
+            <span>Under The Hood • Production Tech Stack</span>
+          </div>
+          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">
+            How Synro AI Was Built: Architecture &amp; Engineering
           </h2>
+          <p className="text-sm text-slate-500 font-medium">
+            From 4D Space-Time A* pathfinding to decentralized Supabase Realtime mesh consensus — explore the interactive layers powering zero-deadlock AMR logistics.
+          </p>
+        </div>
 
-          {/* Annual vs Monthly Toggle */}
-          <div className="inline-flex items-center p-1 rounded-full bg-white border border-[#e2e8f0] shadow-xs gap-1">
+        {/* Live Animated Pipeline Data Flow */}
+        <div className="mb-12 bg-white rounded-[28px] border border-[#e2e8f0] p-6 sm:p-8 shadow-sm">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 mb-6">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+                  Live Dispatch Data Flow Pipeline
+                </h3>
+              </div>
+              <p className="text-xs text-slate-500 font-medium">
+                Follow an autonomous mission token traveling through each architectural subsystem in realtime.
+              </p>
+            </div>
+
             <button
-              onClick={() => setBillingCycle('monthly')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                billingCycle === 'monthly'
-                  ? 'bg-slate-900 text-white'
-                  : 'text-slate-600 hover:text-slate-900'
+              onClick={triggerPacketSimulation}
+              disabled={isSimulatingPacket}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-xs ${
+                isSimulatingPacket
+                  ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                  : 'bg-[#ff334b] hover:bg-[#eb283f] text-white active:scale-95'
               }`}
             >
-              Monthly
+              <Play className={`w-3.5 h-3.5 ${isSimulatingPacket ? 'animate-spin' : ''}`} />
+              <span>{isSimulatingPacket ? 'Simulating Token Ingestion...' : 'Simulate Token Dispatch'}</span>
             </button>
-            <button
-              onClick={() => setBillingCycle('annual')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                billingCycle === 'annual'
-                  ? 'bg-slate-900 text-white'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <span>Annual</span>
-              <span className="text-[9px] bg-[#ff334b] text-white px-1.5 py-0.2 rounded-full font-bold">
-                Save 20%
-              </span>
-            </button>
+          </div>
+
+          {/* Interactive Pipeline Stages */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 relative">
+            {[
+              { label: '1. UI & Dispatch', desc: 'Next.js 14 Client', icon: Code2 },
+              { label: '2. 4D Space-Time', desc: 'A* Token Grid', icon: Cpu },
+              { label: '3. Mesh Consensus', desc: 'Supabase Realtime P2P', icon: Network },
+              { label: '4. Priority Yield', desc: 'Deadlock Arbiter', icon: Workflow },
+              { label: '5. Physical AMR', desc: 'ROS 2 Micro-Bridge', icon: Bot },
+            ].map((stage, idx) => {
+              const StageIcon = stage.icon;
+              const isCurrent = isSimulatingPacket && packetStep === idx;
+              const isCompleted = isSimulatingPacket && packetStep > idx;
+
+              return (
+                <div
+                  key={stage.label}
+                  className={`p-4 rounded-2xl border transition-all duration-300 relative flex flex-col justify-between ${
+                    isCurrent
+                      ? 'bg-red-50 border-[#ff334b] ring-2 ring-red-200 -translate-y-1 shadow-md'
+                      : isCompleted
+                      ? 'bg-emerald-50/50 border-emerald-300'
+                      : 'bg-slate-50/70 border-slate-200/80 hover:bg-slate-100/60'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
+                        isCurrent
+                          ? 'bg-[#ff334b] text-white shadow-xs'
+                          : isCompleted
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-white text-slate-700 border border-slate-200'
+                      }`}
+                    >
+                      <StageIcon className="w-4 h-4" />
+                    </div>
+                    <span className="text-[10px] font-mono font-bold text-slate-400">
+                      Step 0{idx + 1}
+                    </span>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-900 mb-0.5">{stage.label}</h4>
+                    <p className="text-[11px] text-slate-500 font-medium">{stage.desc}</p>
+                  </div>
+                  {isCurrent && (
+                    <div className="mt-2 text-[10px] font-mono text-[#ff334b] font-bold flex items-center gap-1 animate-pulse">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#ff334b]" />
+                      <span>Processing...</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {plans.map((p) => (
-            <div
-              key={p.name}
-              className={`rounded-[26px] p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 bg-white ${
-                p.highlighted
-                  ? 'border-2 border-[#ff334b] shadow-xl ring-4 ring-red-50'
-                  : 'border border-[#e2e8f0] shadow-sm hover:shadow-md'
-              }`}
-            >
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-slate-900">{p.name}</h3>
-                  {p.badge && (
-                    <span
-                      className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                        p.highlighted
-                          ? 'bg-red-50 text-[#ff334b] border border-red-200'
-                          : 'bg-slate-100 text-slate-700'
-                      }`}
-                    >
-                      {p.badge}
-                    </span>
-                  )}
-                </div>
+        {/* 6 Tech Stack Detail Cards with Interactive Selector */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {techStack.map((tech, idx) => {
+            const Icon = tech.icon;
+            const isSelected = activeTechIndex === idx;
 
-                <p className="text-xs text-slate-500 mb-6 font-medium">
-                  {p.desc}
-                </p>
-
-                <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-3xl sm:text-4xl font-extrabold font-mono tracking-tight text-slate-900">
-                    {p.price}
-                  </span>
-                  <span className="text-xs text-slate-500">
-                    {p.period}
-                  </span>
-                </div>
-
-                <div className="space-y-2.5 mb-8 text-xs font-medium text-slate-700">
-                  {p.features.map((f) => (
-                    <div key={f} className="flex items-center gap-2.5">
-                      <Check className={`w-4 h-4 flex-shrink-0 ${p.highlighted ? 'text-[#ff334b]' : 'text-emerald-600'}`} />
-                      <span>{f}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <a
-                href="#pricing"
-                className={`w-full py-3 rounded-xl text-xs font-bold text-center transition-all ${
-                  p.highlighted
-                    ? 'bg-[#ff334b] hover:bg-[#e02438] text-white shadow-md active:scale-95'
-                    : 'bg-slate-900 hover:bg-slate-800 text-white shadow-xs active:scale-95'
+            return (
+              <div
+                key={tech.name}
+                onClick={() => setActiveTechIndex(idx)}
+                className={`bg-white rounded-[24px] border p-6 flex flex-col justify-between cursor-pointer transition-all duration-300 hover:-translate-y-1 group ${
+                  isSelected
+                    ? 'border-[#ff334b] ring-2 ring-red-100 shadow-xl'
+                    : 'border-[#e2e8f0] shadow-sm hover:shadow-md hover:border-slate-300'
                 }`}
               >
-                {p.cta}
-              </a>
-            </div>
-          ))}
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div
+                      className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-colors shadow-2xs ${
+                        isSelected
+                          ? 'bg-[#ff334b] text-white'
+                          : 'bg-slate-50 border border-slate-200/80 text-slate-700 group-hover:bg-slate-900 group-hover:text-white'
+                      }`}
+                    >
+                      <Icon className="w-5 h-5 transition-transform group-hover:scale-110" />
+                    </div>
+                    <span className="text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200 text-slate-600">
+                      {tech.badge}
+                    </span>
+                  </div>
+
+                  <span className="text-[11px] font-semibold text-[#ff334b] uppercase tracking-wider block mb-1">
+                    {tech.category}
+                  </span>
+
+                  <h3 className="text-base font-bold text-slate-900 mb-2 group-hover:text-[#ff334b] transition-colors">
+                    {tech.name}
+                  </h3>
+
+                  <p className="text-xs text-slate-500 leading-relaxed font-medium mb-4">
+                    {tech.desc}
+                  </p>
+
+                  <ul className="space-y-1.5 mb-5 border-t border-slate-100 pt-3">
+                    {tech.specs.map((spec) => (
+                      <li key={spec} className="text-[11px] text-slate-600 flex items-center gap-2">
+                        <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span>{spec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  {/* Code snippet block */}
+                  <div className="bg-[#0f172a] rounded-xl p-3 font-mono text-[10px] text-slate-200 overflow-x-auto mb-3 shadow-inner">
+                    <div className="text-slate-500 text-[9px] mb-1 select-none flex items-center justify-between">
+                      <span>// Production Implementation</span>
+                      <span className="text-emerald-400">● Live</span>
+                    </div>
+                    <pre className="text-slate-300 font-mono leading-tight whitespace-pre-wrap">{tech.codeSnippet}</pre>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-[11px] font-bold text-slate-700">
+                    <span>Performance Benchmark</span>
+                    <span className="text-[#ff334b] font-mono">{tech.metric}</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -958,8 +1117,8 @@ export default function App() {
           <div className="flex items-center gap-6 font-medium">
             <a href="#features" className="hover:text-slate-900 transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-slate-900 transition-colors">How It Works</a>
+            <a href="#techstack" className="hover:text-slate-900 transition-colors">Tech Stack</a>
             <a href="#showcase" className="hover:text-slate-900 transition-colors">Showcase</a>
-            <a href="#pricing" className="hover:text-slate-900 transition-colors">Pricing</a>
             <a href="#faq" className="hover:text-slate-900 transition-colors">FAQ</a>
             <a
               href="https://github.com/prateekfx7/Synroai"
