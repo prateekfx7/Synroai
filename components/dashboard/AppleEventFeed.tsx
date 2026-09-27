@@ -10,6 +10,7 @@ import {
   Gavel,
   Radio,
   Sparkles,
+  RotateCcw,
 } from 'lucide-react';
 
 interface AppleEventFeedProps {
@@ -19,6 +20,12 @@ interface AppleEventFeedProps {
 export const AppleEventFeed: React.FC<AppleEventFeedProps> = ({ events }) => {
   const getEventBadge = (type: EventType) => {
     switch (type) {
+      case 'reassignment':
+        return {
+          icon: <RotateCcw className="w-3.5 h-3.5 text-amber-700" />,
+          bg: 'bg-amber-100 text-amber-900 border-amber-300 font-bold',
+          label: 'Task Reassigned',
+        };
       case 'conflict':
         return {
           icon: <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />,
@@ -29,7 +36,7 @@ export const AppleEventFeed: React.FC<AppleEventFeedProps> = ({ events }) => {
         return {
           icon: <GitBranch className="w-3.5 h-3.5 text-blue-600" />,
           bg: 'bg-blue-50 text-blue-800 border-blue-200/80',
-          label: 'Local Reroute',
+          label: 'A* Reroute',
         };
       case 'failure':
         return {
@@ -41,7 +48,7 @@ export const AppleEventFeed: React.FC<AppleEventFeedProps> = ({ events }) => {
         return {
           icon: <Gavel className="w-3.5 h-3.5 text-purple-600" />,
           bg: 'bg-purple-50 text-purple-800 border-purple-200/80',
-          label: 'Auction Won',
+          label: 'Task Allocated',
         };
       case 'task_complete':
         return {
@@ -81,7 +88,7 @@ export const AppleEventFeed: React.FC<AppleEventFeedProps> = ({ events }) => {
       <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
         {events.length === 0 ? (
           <div className="text-center py-8 text-xs text-[#86868b]">
-            Listening for peer-to-peer broadcasts on Supabase Mesh Bus...
+            Listening for peer broadcasts on Supabase (Realtime DB) — simulated P2P/MQTT message layer...
           </div>
         ) : (
           events.slice(0, 15).map((event) => {

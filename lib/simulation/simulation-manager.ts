@@ -56,19 +56,32 @@ export class SimulationManager {
     cb({ ...this.metrics });
   }
 
+  public isExtendedDemo: boolean = false;
+
   /**
-   * Initialize 4 independent AMRs at warehouse quadrants
+   * Initialize simulated AMRs at warehouse quadrants (Default: 3 AMRs per PS spec, or 4 in Extended Demo)
    */
-  public initFleet() {
+  public initFleet(extendedDemo?: boolean) {
+    if (extendedDemo !== undefined) {
+      this.isExtendedDemo = extendedDemo;
+    }
+
     // Clean up any existing agents
     this.agents.forEach((a) => a.destroy());
 
-    this.agents = [
+    const baseAgents = [
       new RobotAgent('AMR-01', 'Apex Rover 01', { x: 1, y: 1 }, 'E', '#10b981'),
       new RobotAgent('AMR-02', 'Titan Bot 02', { x: 16, y: 1 }, 'W', '#3b82f6'),
       new RobotAgent('AMR-03', 'Scout Cart 03', { x: 1, y: 10 }, 'E', '#8b5cf6'),
-      new RobotAgent('AMR-04', 'Vanguard 04', { x: 16, y: 10 }, 'W', '#f59e0b'),
     ];
+
+    if (this.isExtendedDemo) {
+      baseAgents.push(
+        new RobotAgent('AMR-04', 'Vanguard 04', { x: 16, y: 10 }, 'W', '#f59e0b')
+      );
+    }
+
+    this.agents = baseAgents;
 
     this.currentTasks = [
       {
@@ -116,6 +129,19 @@ export class SimulationManager {
 
     // Initial broadcast from all agents
     this.agents.forEach((a) => a.broadcastState());
+  }
+
+  public toggleExtendedDemo(): boolean {
+    this.isExtendedDemo = !this.isExtendedDemo;
+    this.initFleet();
+    meshBus.pushEvent(
+      'system',
+      'FLEET',
+      this.isExtendedDemo
+        ? 'Fleet switched to Extended Demo: 4 AMRs active (PS spec = 3).'
+        : 'Fleet switched to Planned System (PS) Spec: 3 AMRs active.'
+    );
+    return this.isExtendedDemo;
   }
 
   public startLoop() {
@@ -303,7 +329,7 @@ export class SimulationManager {
     meshBus.pushEvent(
       'system',
       'ORDER',
-      `New order created: ${taskId} [Pickup: (${pick.x}, ${pick.y}) -> Dropoff: (${drop.x}, ${drop.y})]. Open for auction!`
+      `New order created: ${taskId} [Pickup: (${pick.x}, ${pick.y}) -> Dropoff: (${drop.x}, ${drop.y})]. Open for priority allocation!`
     );
   }
 

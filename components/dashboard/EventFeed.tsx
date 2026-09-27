@@ -10,6 +10,7 @@ import {
   Gavel,
   Radio,
   Sparkles,
+  RotateCcw,
 } from 'lucide-react';
 
 interface EventFeedProps {
@@ -19,6 +20,12 @@ interface EventFeedProps {
 export const EventFeed: React.FC<EventFeedProps> = ({ events }) => {
   const getEventBadge = (type: EventType) => {
     switch (type) {
+      case 'reassignment':
+        return {
+          icon: <RotateCcw className="w-3.5 h-3.5 text-amber-300" />,
+          bg: 'bg-amber-950/80 border-amber-600 text-amber-200 font-bold',
+          label: 'TASK REASSIGNED',
+        };
       case 'conflict':
         return {
           icon: <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />,
@@ -29,7 +36,7 @@ export const EventFeed: React.FC<EventFeedProps> = ({ events }) => {
         return {
           icon: <GitBranch className="w-3.5 h-3.5 text-cyan-400" />,
           bg: 'bg-cyan-950/60 border-cyan-800/80 text-cyan-300',
-          label: 'LOCAL REROUTE',
+          label: 'A* REROUTE',
         };
       case 'failure':
         return {
@@ -41,7 +48,7 @@ export const EventFeed: React.FC<EventFeedProps> = ({ events }) => {
         return {
           icon: <Gavel className="w-3.5 h-3.5 text-purple-400" />,
           bg: 'bg-purple-950/60 border-purple-800/80 text-purple-300',
-          label: 'AUCTION WON',
+          label: 'TASK ALLOCATED',
         };
       case 'task_complete':
         return {
@@ -91,7 +98,7 @@ export const EventFeed: React.FC<EventFeedProps> = ({ events }) => {
       <div className="flex-1 overflow-y-auto space-y-2.5 pr-1 font-mono text-xs scrollbar-thin scrollbar-thumb-slate-800">
         {events.length === 0 ? (
           <div className="text-center text-slate-600 py-8">
-            Awaiting mesh coordination events...
+            Awaiting Supabase (Realtime DB) simulated P2P/MQTT events...
           </div>
         ) : (
           events.map((evt) => {

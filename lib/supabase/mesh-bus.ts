@@ -16,8 +16,8 @@ type StateSyncCallback = (data: {
 }) => void;
 
 /**
- * Decentralized Mesh Bus
- * Emulates the peer-to-peer Wi-Fi/mesh broadcast layer via Supabase Realtime Broadcast.
+ * Supabase (Realtime DB) — Simulated P2P/MQTT-style Message Layer
+ * Emulates the peer-to-peer / MQTT-style broadcast layer via Supabase Realtime Broadcast.
  * Also syncs with Supabase Postgres tables if credentials are provided.
  */
 class MeshBus {

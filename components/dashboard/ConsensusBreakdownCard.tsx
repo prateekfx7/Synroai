@@ -39,61 +39,63 @@ export const ConsensusBreakdownCard: React.FC<ConsensusBreakdownCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-black/[0.06] shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-5 flex flex-col justify-between h-full">
+    <div className="bg-white rounded-[28px] border border-[#e5e5e5] shadow-xs p-5 sm:p-6 flex flex-col justify-between h-full">
       <div>
         {/* Top Header */}
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-1.5 text-xs font-semibold tracking-wide text-[#86868b] uppercase">
-            <span>Mesh Consensus Breakdown</span>
-            <Info className="w-3 h-3 text-[#a1a1a6]" />
+          <div className="flex items-center gap-1.5 text-xs font-semibold tracking-wide text-[#737373] uppercase">
+            <span>P2P Consensus Breakdown</span>
+            <span title="Simulated P2P/MQTT Message Layer (Supabase Realtime DB)">
+              <Info className="w-3 h-3 text-[#a3a3a3]" />
+            </span>
           </div>
-          <div className="flex items-center gap-1.5 bg-[#f5f5f7] border border-black/[0.04] px-2 py-0.5 rounded-full">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-mono text-[#1d1d1f] font-medium">Edge P2P</span>
+          <div className="flex items-center gap-1.5 bg-[#faf5e8] border border-[#e5e5e5] px-2.5 py-0.5 rounded-full">
+            <span className="w-2 h-2 rounded-full bg-[#1a3a3a] animate-pulse" />
+            <span className="text-[10px] font-mono text-[#0a0a0a] font-semibold">Simulated P2P</span>
           </div>
         </div>
 
         {/* Speedup Metric */}
         <div className="flex items-baseline justify-between mb-4">
           <div>
-            <span className="text-xs text-[#86868b] block mb-0.5">Speedup vs Baseline:</span>
-            <div className="text-2xl font-bold tracking-tight text-[#1d1d1f]">
+            <span className="text-xs text-[#737373] block mb-0.5">Speedup vs Baseline:</span>
+            <div className="text-3xl font-extrabold tracking-tight text-[#0a0a0a]">
               +{metrics.speedupPercentage}%
             </div>
           </div>
-          <div className="flex items-center gap-1 text-xs text-[#6e6e73] bg-[#f5f5f7] border border-black/[0.04] px-2.5 py-1 rounded-full">
+          <div className="flex items-center gap-1 text-xs text-[#525252] bg-[#faf5e8] border border-[#e5e5e5] px-2.5 py-1 rounded-full font-medium">
             <span>Cycle Latency</span>
-            <ChevronDown className="w-3 h-3 text-[#86868b]" />
+            <ChevronDown className="w-3 h-3 text-[#737373]" />
           </div>
         </div>
 
-        {/* Apple AI Insight Capsule Banner - matching reference image */}
+        {/* Clay AI Insight Capsule Banner */}
         <button
           onClick={() => setShowAiModal(!showAiModal)}
-          className="w-full mb-4 flex items-center justify-between p-2.5 rounded-xl bg-[#f5f6f8] hover:bg-[#eef0f3] border border-black/[0.06] transition-all group text-left shadow-xs"
+          className="w-full mb-4 flex items-center justify-between p-2.5 rounded-2xl bg-[#faf5e8] hover:bg-[#f5eed9] border border-[#e5e5e5] transition-all group text-left shadow-2xs"
         >
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 text-white" />
+          <div className="flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-lg bg-[#0a0a0a] flex items-center justify-center shadow-xs">
+              <Sparkles className="w-3.5 h-3.5 text-[#faf5e8]" />
             </div>
-            <span className="text-xs font-semibold text-[#1d1d1f] group-hover:text-[#0071e3] transition-colors">
+            <span className="text-xs font-semibold text-[#0a0a0a] group-hover:text-[#1a3a3a] transition-colors">
               Get AI insight for fleet bottlenecks
             </span>
           </div>
-          <ArrowUpRight className="w-3.5 h-3.5 text-[#86868b] group-hover:text-[#0071e3] transition-colors" />
+          <ArrowUpRight className="w-3.5 h-3.5 text-[#737373] group-hover:text-[#0a0a0a] transition-colors" />
         </button>
 
         {/* AI Insight Drawer with 1-tap optimization */}
         {showAiModal && (
-          <div className="mb-4 p-3.5 rounded-2xl bg-gradient-to-br from-blue-50/80 via-white to-indigo-50/80 border border-blue-200/80 text-xs text-neutral-700 animate-in fade-in duration-200 space-y-2.5 shadow-sm">
-            <div className="flex items-center justify-between font-semibold text-blue-900">
+          <div className="mb-4 p-3.5 rounded-2xl bg-[#faf5e8] border border-[#ffb084] text-xs text-[#0a0a0a] animate-in fade-in duration-200 space-y-2.5 shadow-xs">
+            <div className="flex items-center justify-between font-bold text-[#0a0a0a]">
               <div className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                <span>Apple Intelligence Fleet Copilot</span>
+                <Sparkles className="w-3.5 h-3.5 text-[#1a3a3a]" />
+                <span>Synro Fleet Copilot</span>
               </div>
-              <span className="text-[10px] text-blue-600 font-mono">Live Rec</span>
+              <span className="text-[10px] text-[#1a3a3a] font-mono font-bold bg-[#a4d4c5]/40 px-2 py-0.5 rounded-full">Live Rec</span>
             </div>
-            <p className="text-[11px] leading-relaxed text-[#475569]">
+            <p className="text-[11px] leading-relaxed text-[#525252]">
               Decentralized yield protocol predicted a potential corridor bottleneck in Aisle 2.
               Applying proactive spatial reservation will save <strong>4.8 seconds</strong> on the next 3 delivery cycles.
             </p>
@@ -101,10 +103,10 @@ export const ConsensusBreakdownCard: React.FC<ConsensusBreakdownCardProps> = ({
             <button
               onClick={handleApply}
               disabled={hasAppliedOptimization}
-              className={`w-full py-1.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm ${
+              className={`w-full py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-xs ${
                 hasAppliedOptimization
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-[#0071e3] hover:bg-[#0077ed] text-white active:scale-98'
+                  ? 'bg-[#1a3a3a] text-white'
+                  : 'bg-[#0a0a0a] hover:bg-[#262626] text-white active:scale-98'
               }`}
             >
               {hasAppliedOptimization ? (
@@ -131,13 +133,13 @@ export const ConsensusBreakdownCard: React.FC<ConsensusBreakdownCardProps> = ({
                   {/* Decentralized Bar (Dark) */}
                   <div
                     style={{ height: `${(item.decentralized / 30) * 100}%` }}
-                    className="w-2 bg-[#1d1d1f] rounded-t-sm group-hover:bg-[#0071e3] transition-colors"
+                    className="w-2 bg-[#0a0a0a] rounded-t-sm group-hover:bg-[#1a3a3a] transition-colors"
                     title={`Decentralized: ${item.decentralized}s`}
                   />
-                  {/* Baseline Bar (Light Grey) */}
+                  {/* Baseline Bar (Warm grey) */}
                   <div
                     style={{ height: `${(item.baseline / 30) * 100}%` }}
-                    className="w-1.5 bg-[#e5e5e7] rounded-t-sm group-hover:bg-[#cbd5e1] transition-colors"
+                    className="w-1.5 bg-[#e5e5e5] rounded-t-sm group-hover:bg-[#d4d4d4] transition-colors"
                     title={`Stop-and-Wait: ${item.baseline}s`}
                   />
                 </div>
@@ -146,14 +148,14 @@ export const ConsensusBreakdownCard: React.FC<ConsensusBreakdownCardProps> = ({
           </div>
 
           {/* Time axis range */}
-          <div className="flex items-center justify-between text-[10px] text-[#86868b] mt-2 pt-2 border-t border-black/[0.04]">
+          <div className="flex items-center justify-between text-[10px] text-[#737373] mt-2 pt-2 border-t border-[#e5e5e5]">
             <span>Cycle 1</span>
             <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-[2px] bg-[#1d1d1f]" /> P2P Edge
+              <span className="flex items-center gap-1 font-medium">
+                <span className="w-2 h-2 rounded-[2px] bg-[#0a0a0a]" /> P2P Edge
               </span>
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-[2px] bg-[#e5e5e7]" /> Baseline
+              <span className="flex items-center gap-1 font-medium">
+                <span className="w-2 h-2 rounded-[2px] bg-[#e5e5e5]" /> Baseline
               </span>
             </div>
             <span>Cycle 10</span>
@@ -162,13 +164,13 @@ export const ConsensusBreakdownCard: React.FC<ConsensusBreakdownCardProps> = ({
       </div>
 
       {/* Mode Switcher Button */}
-      <div className="pt-3 border-t border-black/[0.04] mt-2">
+      <div className="pt-3 border-t border-[#e5e5e5] mt-2">
         <button
           onClick={onToggleBaseline}
-          className={`w-full py-2 px-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 border ${
+          className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 border ${
             isDecentralized
-              ? 'bg-[#f5f6f8] text-[#1d1d1f] border-black/[0.08] hover:bg-[#eceef2]'
-              : 'bg-amber-500 text-white border-amber-600 shadow-sm'
+              ? 'bg-[#faf5e8] text-[#0a0a0a] border-[#e5e5e5] hover:border-[#0a0a0a]'
+              : 'bg-[#ffb084] text-[#0a0a0a] border-[#0a0a0a] shadow-xs'
           }`}
         >
           <Zap className="w-3.5 h-3.5" />

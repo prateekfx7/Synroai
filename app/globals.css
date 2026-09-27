@@ -2,39 +2,89 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   EXCLUSIVELY LOAD & APPLY HELVETICA & HELVETICA-BOLD
+   ============================================================ */
+
+/* 1. Helvetica Regular (Weights 100 to 500) */
+@font-face {
+  font-family: 'Helvetica';
+  src: url('/fonts/Helvetica.woff') format('woff'),
+       url('../Helvetica.woff') format('woff');
+  font-weight: 100 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 2. Helvetica Bold (Weights 600 to 900) */
+@font-face {
+  font-family: 'Helvetica';
+  src: url('/fonts/Helvetica-Bold.woff') format('woff'),
+       url('../Helvetica-Bold.woff') format('woff');
+  font-weight: 600 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 3. Explicit Helvetica-Bold Family */
+@font-face {
+  font-family: 'Helvetica-Bold';
+  src: url('/fonts/Helvetica-Bold.woff') format('woff'),
+       url('../Helvetica-Bold.woff') format('woff');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --background: #f5f6f8;
-  --foreground: #1d1d1f;
+  --background: #edf0f4;
+  --foreground: #0f172a;
   --card: #ffffff;
-  --card-border: rgba(0, 0, 0, 0.06);
-  --muted: #86868b;
-  --apple-blue: #0071e3;
+  --card-border: #e2e8f0;
+  --accent-red: #ff334b;
+}
+
+/* Force Helvetica on all elements, strictly no other fonts */
+*, *::before, *::after {
+  font-family: 'Helvetica', sans-serif !important;
+}
+
+/* Headings and bold weights strictly use Helvetica-Bold */
+h1, h2, h3, h4, h5, h6,
+strong, b,
+.font-bold, .font-semibold, .font-extrabold, .font-black {
+  font-family: 'Helvetica-Bold', 'Helvetica', sans-serif !important;
+}
+
+/* Even monospace elements use Helvetica */
+code, kbd, samp, pre, .font-mono {
+  font-family: 'Helvetica', sans-serif !important;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Helvetica', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
-/* Apple-style minimalist scrollbar */
+/* Minimalist scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f2f4;
+  background: #edf0f4;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d2d2d7;
+  background: #cbd5e1;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #86868b;
+  background: #94a3b8;
 }

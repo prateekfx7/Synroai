@@ -34,6 +34,7 @@ export interface WarehouseTask {
   dropoff_cell: GridPosition;
   status: TaskStatus;
   assigned_robot_id: string | null;
+  previous_failed_robot_id?: string | null;
   bids: Record<string, number>; // robot_id -> computed bid score
   created_at?: string;
   completed_at?: string | null;

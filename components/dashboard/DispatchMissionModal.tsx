@@ -48,7 +48,7 @@ export const DispatchMissionModal: React.FC<DispatchMissionModalProps> = ({
           </div>
           <div>
             <h3 className="text-base font-bold text-[#1d1d1f]">Dispatch Warehouse Mission</h3>
-            <p className="text-xs text-[#86868b]">Broadcast task to peer-to-peer auction pool</p>
+            <p className="text-xs text-[#86868b]">Broadcast task for distributed priority allocation</p>
           </div>
         </div>
 
@@ -101,9 +101,14 @@ export const DispatchMissionModal: React.FC<DispatchMissionModalProps> = ({
 
           {/* Priority Pill */}
           <div>
-            <label className="text-xs font-semibold text-[#1d1d1f] block mb-1.5">
-              Auction Priority
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-semibold text-[#1d1d1f]">
+                Mission Priority
+              </label>
+              <span className="text-[10px] text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200/60 font-mono">
+                urgency + waiting + battery risk
+              </span>
+            </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setPriority('normal')}

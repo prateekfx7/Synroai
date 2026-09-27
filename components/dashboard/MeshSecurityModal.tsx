@@ -32,15 +32,15 @@ export const MeshSecurityModal: React.FC<MeshSecurityModalProps> = ({
           </div>
           <div>
             <h3 className="text-base font-bold text-[#1d1d1f]">Synro Mesh Security</h3>
-            <p className="text-xs text-[#86868b]">Cryptographic Peer-to-Peer Verification</p>
+            <p className="text-xs text-[#86868b]">Simulated P2P/MQTT Message Security</p>
           </div>
         </div>
 
         <div className="space-y-3 text-xs text-[#6e6e73] mb-6">
           <div className="p-3 bg-[#f5f6f8] rounded-2xl border border-black/[0.04] flex items-center justify-between">
-            <span className="font-medium text-[#1d1d1f]">P2P Gossip Bus Encryption</span>
+            <span className="font-medium text-[#1d1d1f]">Simulated P2P/MQTT Channel</span>
             <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-              AES-256 GCM
+              Supabase Realtime
             </span>
           </div>
 
@@ -52,9 +52,9 @@ export const MeshSecurityModal: React.FC<MeshSecurityModalProps> = ({
           </div>
 
           <div className="p-3 bg-[#f5f6f8] rounded-2xl border border-black/[0.04] flex items-center justify-between">
-            <span className="font-medium text-[#1d1d1f]">Deadlock Arbitration Protocol</span>
-            <span className="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-              Vickrey-Clarke-Groves
+            <span className="font-medium text-[#1d1d1f]">Task Allocation Arbitration</span>
+            <span className="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200 font-mono">
+              Priority Formula
             </span>
           </div>
         </div>

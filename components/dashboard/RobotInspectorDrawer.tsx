@@ -132,7 +132,7 @@ export const RobotInspectorDrawer: React.FC<RobotInspectorDrawerProps> = ({
               </div>
             ) : (
               <p className="text-xs text-[#86868b] pt-1">
-                No active assignment. Autonomous auction engine will allocate on task broadcast.
+                No active assignment. Standby for task allocation via priority formula: <code>Priority = urgency + waiting time + battery risk</code>.
               </p>
             )}
           </div>
@@ -141,10 +141,13 @@ export const RobotInspectorDrawer: React.FC<RobotInspectorDrawerProps> = ({
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-semibold text-[#1d1d1f]">
-                Planned Space-Time Path ({robot.planned_path?.length || 0} Steps)
+                Planned A* Path ({robot.planned_path?.length || 0} Steps)
               </span>
-              <span className="text-[10px] text-[#86868b]">Horizon = 12</span>
+              <span className="text-[10px] text-[#86868b]">Space-Time Horizon = 12</span>
             </div>
+            <p className="text-[10px] text-[#86868b] mb-1.5">
+              Route computed via A* Routing; Space-Time Reservations negotiate conflict-free right-of-way.
+            </p>
             <div className="max-h-36 overflow-y-auto space-y-1 bg-[#fafafa] p-2.5 rounded-2xl border border-black/[0.04] text-xs font-mono text-[#6e6e73]">
               {robot.planned_path && robot.planned_path.length > 0 ? (
                 robot.planned_path.map((step, idx) => (

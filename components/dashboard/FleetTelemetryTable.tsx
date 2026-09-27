@@ -62,37 +62,37 @@ export const FleetTelemetryTable: React.FC<FleetTelemetryTableProps> = ({
     switch (status) {
       case 'moving':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            En Route
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#a4d4c5]/25 text-[#1a3a3a] border border-[#a4d4c5]/50" title="Navigating via A* Routing">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#1a3a3a] animate-pulse" />
+            A* En Route
           </span>
         );
       case 'waiting':
       case 'blocked':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-            Yielding / P2P
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#fef3c7] text-[#92400e] border border-[#fde68a]" title="Space-time reservation yield active">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#d97706] animate-pulse" />
+            A* Yielding
           </span>
         );
       case 'failed':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#ff6b5a]/15 text-[#991b1b] border border-[#ff6b5a]/40">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#ff6b5a]" />
             Fault Injected
           </span>
         );
       case 'charging':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#b8a4ed]/20 text-[#4c1d95] border border-[#b8a4ed]/50">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#7c3aed]" />
             Docked Charging
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-neutral-100 text-neutral-600 border border-neutral-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-neutral-400" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#faf5e8] text-[#525252] border border-[#e5e5e5]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#a3a3a3]" />
             Standby / Bidding
           </span>
         );
@@ -100,35 +100,35 @@ export const FleetTelemetryTable: React.FC<FleetTelemetryTableProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-black/[0.06] shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-3.5 sm:p-5">
+    <div className="bg-white rounded-[28px] border border-[#e5e5e5] shadow-xs p-4 sm:p-6">
       {/* Table Header Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
-          <h3 className="text-sm font-semibold tracking-tight text-[#1d1d1f]">
+          <h3 className="text-sm font-semibold tracking-tight text-[#0a0a0a]">
             Synro AMR Fleet &amp; Mission Telemetry
           </h3>
-          <p className="text-xs text-[#86868b]">
-            Edge Peer-to-Peer Heartbeats • Autonomous Rerouting Status
+          <p className="text-xs text-[#737373]">
+            Edge Peer-to-Peer Heartbeats • Autonomous A* Rerouting Status
           </p>
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
           {/* Search Box */}
           <div className="relative flex-1 sm:flex-initial">
-            <Search className="w-3.5 h-3.5 text-[#86868b] absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-[#737373] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search AMR ID, model..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8 pr-3 py-1.5 rounded-xl bg-[#f5f6f8] border border-black/[0.06] text-xs text-[#1d1d1f] placeholder-[#86868b] focus:outline-none focus:ring-2 focus:ring-[#0071e3]/20 focus:border-[#0071e3] transition-all w-full sm:w-52"
+              className="pl-8 pr-3 py-1.5 rounded-xl bg-[#faf5e8] border border-[#e5e5e5] text-xs text-[#0a0a0a] placeholder-[#737373] focus:outline-none focus:ring-2 focus:ring-[#1a3a3a]/20 focus:border-[#0a0a0a] transition-all w-full sm:w-52"
             />
           </div>
 
           {/* Add Mission Pill Button */}
           <button
             onClick={onSpawnTask}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#1d1d1f] hover:bg-[#333336] text-white text-xs font-medium transition-all shadow-sm active:scale-95 whitespace-nowrap flex-shrink-0"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#0a0a0a] hover:bg-[#262626] text-[#faf5e8] text-xs font-semibold transition-all shadow-xs active:scale-95 whitespace-nowrap flex-shrink-0"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>+ Add Mission</span>
@@ -140,13 +140,13 @@ export const FleetTelemetryTable: React.FC<FleetTelemetryTableProps> = ({
       <div className="overflow-x-auto -mx-3.5 px-3.5 sm:mx-0 sm:px-0 touch-pan-x">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-black/[0.04] text-[11px] font-semibold text-[#86868b] uppercase tracking-wider">
-              <th className="py-2.5 px-3 w-8">
+            <tr className="border-b border-[#e5e5e5] text-[11px] font-semibold text-[#737373] uppercase tracking-wider bg-[#faf5e8]/50">
+              <th className="py-2.5 px-3 w-8 rounded-l-xl">
                 <input
                   type="checkbox"
                   checked={selectedRobots.length === robots.length && robots.length > 0}
                   onChange={toggleSelectAll}
-                  className="rounded border-neutral-300 text-[#0071e3] focus:ring-0 cursor-pointer"
+                  className="rounded border-[#e5e5e5] text-[#0a0a0a] focus:ring-0 cursor-pointer"
                 />
               </th>
               <th className="py-2.5 px-3">AMR ID</th>
@@ -156,10 +156,10 @@ export const FleetTelemetryTable: React.FC<FleetTelemetryTableProps> = ({
               <th className="py-2.5 px-3">Battery</th>
               <th className="py-2.5 px-3">Position</th>
               <th className="py-2.5 px-3">P2P Health</th>
-              <th className="py-2.5 px-3 text-right">Actions</th>
+              <th className="py-2.5 px-3 text-right rounded-r-xl">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-black/[0.04] text-xs">
+          <tbody className="divide-y divide-[#e5e5e5]/80 text-xs">
             {filteredRobots.map((robot) => {
               const isSelected = selectedRobots.includes(robot.id);
               const activeTask = tasks.find((t) => t.id === robot.current_task_id);
@@ -168,8 +168,8 @@ export const FleetTelemetryTable: React.FC<FleetTelemetryTableProps> = ({
               return (
                 <tr
                   key={robot.id}
-                  className={`hover:bg-[#f9fafb] transition-colors ${
-                    isSelected ? 'bg-blue-50/40' : ''
+                  className={`hover:bg-[#faf5e8]/40 transition-colors ${
+                    isSelected ? 'bg-[#ffb084]/15' : ''
                   }`}
                 >
                   <td className="py-3 px-3">
@@ -177,33 +177,33 @@ export const FleetTelemetryTable: React.FC<FleetTelemetryTableProps> = ({
                       type="checkbox"
                       checked={isSelected}
                       onChange={() => toggleSelectRobot(robot.id)}
-                      className="rounded border-neutral-300 text-[#0071e3] focus:ring-0 cursor-pointer"
+                      className="rounded border-[#e5e5e5] text-[#0a0a0a] focus:ring-0 cursor-pointer"
                     />
                   </td>
                   <td
                     onClick={() => onInspectRobot && onInspectRobot(robot.id)}
-                    className="py-3 px-3 font-semibold text-[#1d1d1f] cursor-pointer hover:text-[#0071e3] transition-colors"
+                    className="py-3 px-3 font-semibold text-[#0a0a0a] cursor-pointer hover:text-[#1a3a3a] transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <div
-                        className="w-2.5 h-2.5 rounded-full"
-                        style={{ backgroundColor: robot.color || '#0071e3' }}
+                        className="w-2.5 h-2.5 rounded-full ring-1 ring-[#0a0a0a]/10"
+                        style={{ backgroundColor: robot.color || '#1a3a3a' }}
                       />
                       <span>{robot.id}</span>
                     </div>
                   </td>
-                  <td className="py-3 px-3 font-medium text-[#1d1d1f]">
+                  <td className="py-3 px-3 font-medium text-[#0a0a0a]">
                     {robot.name}
                   </td>
-                  <td className="py-3 px-3 text-[#6e6e73]">
+                  <td className="py-3 px-3 text-[#525252]">
                     {activeTask ? (
-                      <span className="font-mono text-[11px] text-[#1d1d1f] bg-[#f5f5f7] px-2 py-0.5 rounded border border-black/[0.04]">
+                      <span className="font-mono text-[11px] text-[#0a0a0a] bg-[#faf5e8] px-2 py-0.5 rounded-md border border-[#e5e5e5]">
                         {activeTask.id} (→ {activeTask.dropoff_cell.x},{activeTask.dropoff_cell.y})
                       </span>
                     ) : robot.payload ? (
-                      <span className="text-[#6e6e73]">{robot.payload}</span>
+                      <span className="text-[#525252]">{robot.payload}</span>
                     ) : (
-                      <span className="text-[#a1a1a6]">Idle / Awaiting Auction</span>
+                      <span className="text-[#a3a3a3]">Idle / Awaiting Allocation</span>
                     )}
                   </td>
                   <td className="py-3 px-3">
@@ -211,37 +211,37 @@ export const FleetTelemetryTable: React.FC<FleetTelemetryTableProps> = ({
                   </td>
                   <td className="py-3 px-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-14 bg-neutral-100 rounded-full h-1.5 overflow-hidden">
+                      <div className="w-14 bg-[#faf5e8] border border-[#e5e5e5] rounded-full h-1.5 overflow-hidden">
                         <div
                           className={`h-full rounded-full ${
                             robot.battery > 40
-                              ? 'bg-emerald-500'
+                              ? 'bg-[#1a3a3a]'
                               : robot.battery > 20
-                              ? 'bg-amber-500'
-                              : 'bg-rose-500'
+                              ? 'bg-[#f59e0b]'
+                              : 'bg-[#ff6b5a]'
                           }`}
                           style={{ width: `${robot.battery}%` }}
                         />
                       </div>
-                      <span className="font-mono text-[11px] text-[#6e6e73] font-medium">
+                      <span className="font-mono text-[11px] text-[#525252] font-semibold">
                         {Math.round(robot.battery)}%
                       </span>
                     </div>
                   </td>
-                  <td className="py-3 px-3 font-mono text-[11px] text-[#6e6e73]">
+                  <td className="py-3 px-3 font-mono text-[11px] text-[#525252]">
                     ({robot.x}, {robot.y}) • {robot.heading}
                   </td>
-                  <td className="py-3 px-3 text-[#6e6e73]">
-                    <span className="text-emerald-600 font-medium">Optimal</span>
+                  <td className="py-3 px-3 text-[#525252]">
+                    <span className="text-[#1a3a3a] font-semibold">Optimal</span>
                   </td>
                   <td className="py-3 px-3 text-right relative">
                     <div className="flex items-center justify-end gap-1.5">
                       <button
                         onClick={() => onFailRobot(robot.id)}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all border ${
                           robot.status === 'failed'
-                            ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
-                            : 'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200'
+                            ? 'bg-[#a4d4c5]/30 text-[#1a3a3a] hover:bg-[#a4d4c5]/50 border-[#a4d4c5]'
+                            : 'bg-[#ff6b5a]/15 text-[#991b1b] hover:bg-[#ff6b5a]/30 border-[#ff6b5a]/40'
                         }`}
                         title="Simulate Hardware Disruption"
                       >
@@ -251,7 +251,7 @@ export const FleetTelemetryTable: React.FC<FleetTelemetryTableProps> = ({
                       {/* Dropdown Menu Trigger */}
                       <button
                         onClick={() => setActiveMenuRobotId(isMenuOpen ? null : robot.id)}
-                        className="p-1 rounded-lg hover:bg-neutral-100 text-[#86868b] transition-colors relative"
+                        className="p-1 rounded-lg hover:bg-[#faf5e8] text-[#737373] transition-colors relative"
                         title="More Actions"
                       >
                         <MoreHorizontal className="w-4 h-4" />
@@ -259,15 +259,15 @@ export const FleetTelemetryTable: React.FC<FleetTelemetryTableProps> = ({
 
                       {/* Working Row Dropdown */}
                       {isMenuOpen && (
-                        <div className="absolute right-0 top-10 z-40 bg-white border border-black/[0.08] rounded-2xl shadow-xl p-1.5 w-40 text-left text-xs space-y-0.5 animate-in fade-in duration-100">
+                        <div className="absolute right-0 top-10 z-40 bg-[#faf5e8] border border-[#e5e5e5] rounded-2xl shadow-xl p-1.5 w-40 text-left text-xs space-y-0.5 animate-in fade-in duration-100">
                           <button
                             onClick={() => {
                               if (onInspectRobot) onInspectRobot(robot.id);
                               setActiveMenuRobotId(null);
                             }}
-                            className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-neutral-50 text-[#1d1d1f]"
+                            className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white text-[#0a0a0a]"
                           >
-                            <Eye className="w-3.5 h-3.5 text-[#0071e3]" />
+                            <Eye className="w-3.5 h-3.5 text-[#1a3a3a]" />
                             <span>Inspect Node</span>
                           </button>
                           <button
@@ -275,7 +275,7 @@ export const FleetTelemetryTable: React.FC<FleetTelemetryTableProps> = ({
                               onFailRobot(robot.id);
                               setActiveMenuRobotId(null);
                             }}
-                            className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-neutral-50 text-rose-600"
+                            className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white text-[#ff6b5a]"
                           >
                             <AlertTriangle className="w-3.5 h-3.5" />
                             <span>{robot.status === 'failed' ? 'Reboot' : 'Fault Test'}</span>

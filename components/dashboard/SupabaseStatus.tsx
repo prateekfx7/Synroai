@@ -17,12 +17,12 @@ export const SupabaseStatus: React.FC = () => {
           {isSupabaseConfigured ? (
             <>
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[#1d1d1f] font-medium">Supabase Realtime</span>
+              <span className="text-[#1d1d1f] font-medium">Supabase (Realtime DB)</span>
             </>
           ) : (
             <>
               <div className="w-2 h-2 rounded-full bg-[#0071e3] animate-pulse" />
-              <span className="text-[#1d1d1f] font-medium">Edge Mesh P2P</span>
+              <span className="text-[#1d1d1f] font-medium">Simulated P2P/MQTT Layer</span>
             </>
           )}
           <Info className="w-3.5 h-3.5 text-[#86868b]" />
@@ -45,10 +45,10 @@ export const SupabaseStatus: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-base font-bold text-[#1d1d1f]">
-                  Decentralized Mesh Architecture
+                  Communication &amp; Coordination Layer
                 </h3>
                 <p className="text-xs text-[#86868b]">
-                  Autonomous Peer-to-Peer Protocol
+                  Supabase (Realtime DB) — Simulated P2P/MQTT-Style Message Layer
                 </p>
               </div>
             </div>
@@ -59,21 +59,22 @@ export const SupabaseStatus: React.FC = () => {
                   <CheckCircle className="w-4 h-4 text-emerald-600" />
                   {isSupabaseConfigured
                     ? 'Connected to Live Supabase Backend'
-                    : 'Local Edge Mesh Active (Zero-Latency Demo)'}
+                    : 'Simulated P2P/MQTT Message Layer Active (Zero-Latency Demo)'}
                 </div>
                 <p className="text-[#86868b] text-[11px]">
                   {isSupabaseConfigured
-                    ? 'Each autonomous robot is broadcasting its intent to the Supabase Realtime channel and persisting telemetry to PostgreSQL.'
-                    : 'Robots communicate peer-to-peer using high-frequency broadcast bus without requiring central coordinator. You can optionally link a live Supabase project by configuring .env.local.'}
+                    ? 'Each autonomous robot broadcasts its intent to the Supabase (Realtime DB) simulated P2P/MQTT message layer and persists telemetry to PostgreSQL.'
+                    : 'Robots communicate via a simulated P2P/MQTT-style message layer (backed by Supabase Realtime broadcast channels or high-frequency in-memory bus) without a central coordinator.'}
                 </p>
               </div>
 
               <div className="p-3.5 rounded-2xl bg-[#f5f6f8] border border-black/[0.04] space-y-1">
-                <span className="font-semibold text-[#1d1d1f]">Decentralized Consensus Highlights:</span>
+                <span className="font-semibold text-[#1d1d1f]">System Architecture Highlights:</span>
                 <ul className="list-disc list-inside space-y-1 text-[11px] text-[#6e6e73] pt-1">
-                  <li>Zero Central Point of Failure: No server decides robot routes.</li>
-                  <li>Space-Time A* Reservation: AMR peers negotiate right-of-way directly.</li>
-                  <li>Distributed Task Auctions: Robots bid based on battery and Euclidean distance.</li>
+                  <li>Zero Central Point of Failure: Edge robots plan routes and arbitrate right-of-way.</li>
+                  <li>A* Routing with Space-Time Reservation: AMRs compute collision-free paths using A* combined with space-time reservation coordinate tokens.</li>
+                  <li>Priority-Based Task Allocation: Evaluated via <code>Priority = urgency + waiting time + battery risk</code>.</li>
+                  <li>Simulated P2P/MQTT Layer: Supabase Realtime DB provides the underlying pub/sub transport.</li>
                 </ul>
               </div>
             </div>

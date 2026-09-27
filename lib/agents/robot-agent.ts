@@ -178,10 +178,11 @@ export class RobotAgent {
         if (peer.currentTaskId) {
           const failedTask = allTasks.find((t) => t.id === peer.currentTaskId);
           if (failedTask && failedTask.status !== 'done') {
+            failedTask.previous_failed_robot_id = peerId;
             meshBus.pushEvent(
               'reassignment',
               this.id,
-              `${this.id} initiated task re-auction for ${failedTask.id} (previously held by failed ${peerId}).`
+              `Task Reassignment Started: ${failedTask.id} released from failed node ${peerId}. Open for peer priority claims.`
             );
             failedTask.status = 'pending';
             failedTask.assigned_robot_id = null;
@@ -244,18 +245,27 @@ export class RobotAgent {
 
           const [winningRobotId, winningBid] = bidEntries[0];
           if (winningRobotId === this.id) {
-            // We won the auction!
+            const previousFailedNode = task.previous_failed_robot_id;
             task.status = 'assigned';
             task.assigned_robot_id = this.id;
             this.currentTaskId = task.id;
             this.currentGoal = task.pickup_cell;
             this.status = 'moving';
 
-            meshBus.pushEvent(
-              'bid_won',
-              this.id,
-              `${this.id} won task ${task.id} auction with lowest bid score ${winningBid}. Navigating to pickup (${task.pickup_cell.x}, ${task.pickup_cell.y}).`
-            );
+            if (previousFailedNode) {
+              meshBus.pushEvent(
+                'reassignment',
+                this.id,
+                `Task Reassigned: Task ${task.id} handed off from failed ${previousFailedNode} → newly assigned to ${this.id}.`
+              );
+              task.previous_failed_robot_id = null;
+            } else {
+              meshBus.pushEvent(
+                'bid_won',
+                this.id,
+                `${this.id} claimed task ${task.id} via priority scoring (score ${winningBid}). Navigating via A* Routing to pickup (${task.pickup_cell.x}, ${task.pickup_cell.y}).`
+              );
+            }
 
             meshBus.syncTaskState(task);
             this.replanPath(this.currentGoal);

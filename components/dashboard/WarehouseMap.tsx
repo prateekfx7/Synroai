@@ -77,46 +77,49 @@ export const WarehouseMap: React.FC<WarehouseMapProps> = ({
   };
 
   return (
-    <div className="relative w-full rounded-2xl bg-white border border-black/[0.06] shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-3 sm:p-5 overflow-hidden">
+    <div className="relative w-full rounded-[28px] bg-white border border-[#e5e5e5] shadow-xs p-3.5 sm:p-5 overflow-hidden">
       {/* Map Header & Legend */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-2.5">
-          <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
-          <h2 className="text-xs sm:text-sm font-semibold tracking-tight text-[#1d1d1f] truncate">
+          <div className="h-2 w-2 rounded-full bg-[#22c55e] animate-pulse flex-shrink-0" />
+          <h2 className="text-xs sm:text-sm font-bold tracking-tight text-[#0a0a0a] truncate">
             Warehouse Floor Grid (18 × 12)
           </h2>
-          <span className="text-[10px] sm:text-[11px] font-medium text-[#6e6e73] bg-[#f5f5f7] border border-black/[0.06] px-2 py-0.5 rounded-full truncate">
-            P2P Spatial Mesh
+          <span
+            className="text-[10px] sm:text-[11px] font-bold text-[#0a0a0a] bg-[#faf5e8] border border-[#e5e5e5] px-2.5 py-0.5 rounded-full truncate"
+            title="Route generation via A* Routing with decentralized Space-Time Reservation for collision avoidance"
+          >
+            A* Routing &amp; Space-Time Reservation
           </span>
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-[#6e6e73]">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-[#6a6a6a]">
           <div className="flex items-center gap-1">
-            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-[#e2e8f0] border border-[#cbd5e1]" />
-            <span>Shelves</span>
+            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-[#e2ded4] border border-[#a8a296]" />
+            <span className="font-medium text-[#0a0a0a]">Shelves</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-[#ecfdf5] border border-[#10b981]" />
-            <span>Charging</span>
+            <span className="font-medium text-[#0a0a0a]">Charging</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-[#fffbeb] border border-[#f59e0b]" />
-            <span>Pickup</span>
+            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-[#fff7ed] border border-[#ffb084]" />
+            <span className="font-medium text-[#0a0a0a]">Pickup</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-[#eff6ff] border border-[#3b82f6]" />
-            <span>Dropoff</span>
+            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-[#f5f3ff] border border-[#b8a4ed]" />
+            <span className="font-medium text-[#0a0a0a]">Dropoff</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-rose-100 border border-rose-500" />
-            <span className="text-rose-600 font-medium">Blocked</span>
+            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-[#fee2e2] border border-[#ef4444]" />
+            <span className="text-[#b91c1c] font-bold">Blocked</span>
           </div>
         </div>
       </div>
 
       {/* SVG Canvas Container with Touch Momentum */}
-      <div className="w-full overflow-x-auto flex justify-start sm:justify-center bg-[#fbfcfd] rounded-xl p-2 sm:p-3 border border-black/[0.04] touch-pan-x">
+      <div className="w-full overflow-x-auto flex justify-start sm:justify-center bg-[#fffaf0] rounded-2xl p-2 sm:p-3 border border-[#e5e5e5] touch-pan-x">
         <svg
           viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
           className="w-full max-w-5xl h-auto select-none"
@@ -507,10 +510,10 @@ export const WarehouseMap: React.FC<WarehouseMapProps> = ({
       </div>
 
       {/* Footer Helper */}
-      <div className="flex flex-wrap items-center justify-between mt-3 text-xs text-[#86868b]">
+      <div className="flex flex-wrap items-center justify-between mt-3 text-xs text-[#86868b] gap-2">
         <div className="flex items-center gap-1.5">
           <Info className="w-3.5 h-3.5 text-[#0071e3]" />
-          <span>Click any aisle cell to place or remove a temporary obstacle block.</span>
+          <span>Click aisle to place/remove obstacle. AMRs calculate routes via A* Routing with Space-Time Reservation.</span>
         </div>
         <div>
           <span>Click any AMR puck to simulate a localized hardware fault.</span>
