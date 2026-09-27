@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
+import { useSynroAuth } from '@/lib/auth/use-synro-auth';
 import {
   LayoutDashboard,
   MapPin,
@@ -16,6 +18,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   X,
+  LogIn,
 } from 'lucide-react';
 
 interface AppleSidebarProps {
@@ -51,6 +54,8 @@ export const AppleSidebar: React.FC<AppleSidebarProps> = ({
   onOpenDocksPickups,
   onOpenChaosLab,
 }) => {
+  const { user } = useSynroAuth();
+
   const handleTabClick = (tab: any) => {
     setActiveTab(tab);
     if (onCloseMobile) onCloseMobile();
@@ -93,7 +98,7 @@ export const AppleSidebar: React.FC<AppleSidebarProps> = ({
                     <h2 className="text-sm font-extrabold text-[#1d1d1f] leading-tight tracking-tight">Synro</h2>
                     {isMobileOpen ? (
                       <span className="text-[10px] font-mono text-[#1d1d1f] font-semibold bg-[#f5f5f7] border border-black/[0.06] px-1.5 py-0.5 rounded">
-                        ID: OP-8492
+                        ID: {user?.id || 'OP-8492'}
                       </span>
                     ) : (
                       <span className="text-[9px] font-bold bg-blue-50 text-[#0071e3] border border-blue-200/80 px-1.5 py-0.2 rounded-full uppercase">
@@ -341,7 +346,7 @@ export const AppleSidebar: React.FC<AppleSidebarProps> = ({
         </div>
 
         {/* Bottom Profile Pill */}
-        <div className="pt-4 border-t border-black/[0.04]">
+        <div className="pt-4 border-t border-black/[0.04] space-y-2">
           <div
             onClick={() => {
               if (onCloseMobile) onCloseMobile();
@@ -352,17 +357,19 @@ export const AppleSidebar: React.FC<AppleSidebarProps> = ({
           >
             <div className="flex items-center gap-2.5">
               <div className="relative flex-shrink-0">
-                <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-xs">
-                  SP
+                <div className={`w-8 h-8 rounded-full bg-gradient-to-tr ${user?.avatarColor || 'from-[#1d1d1f] to-neutral-800'} text-white flex items-center justify-center font-bold text-xs shadow-xs`}>
+                  {user?.initials || 'SP'}
                 </div>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white absolute bottom-0 right-0" />
               </div>
               {(!isCollapsed || isMobileOpen) && (
                 <div className="truncate">
                   <p className="text-xs font-bold text-[#1d1d1f] leading-tight truncate group-hover:text-[#0071e3] transition-colors">
-                    Salung Prastyo
+                    {user?.name || 'Salung Prastyo'}
                   </p>
-                  <p className="text-[10px] text-[#86868b] leading-tight">Fleet Operator</p>
+                  <p className="text-[10px] text-[#86868b] leading-tight truncate">
+                    {user?.role || 'Fleet Operator'}
+                  </p>
                 </div>
               )}
             </div>
@@ -370,6 +377,22 @@ export const AppleSidebar: React.FC<AppleSidebarProps> = ({
               <ChevronDown className="w-3.5 h-3.5 text-[#86868b] group-hover:text-[#1d1d1f]" />
             )}
           </div>
+
+          {/* Quick Switch / Sign In Link */}
+          {(!isCollapsed || isMobileOpen) && (
+            <div className="px-2 flex items-center justify-between text-[11px] text-[#86868b]">
+              <Link
+                href="/login"
+                className="hover:text-[#1d1d1f] flex items-center gap-1 transition-colors font-medium"
+              >
+                <LogIn className="w-3 h-3 text-[#86868b]" />
+                <span>Switch / Sign In</span>
+              </Link>
+              <span className="font-mono text-[10px] text-[#9ca3af]">
+                {user?.id || 'OP-8492'}
+              </span>
+            </div>
+          )}
         </div>
       </aside>
     </>

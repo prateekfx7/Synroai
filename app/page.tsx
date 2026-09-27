@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useSynroAuth } from '@/lib/auth/use-synro-auth';
 import { SimulationManager } from '@/lib/simulation/simulation-manager';
 import { meshBus } from '@/lib/supabase/mesh-bus';
 import {
@@ -55,6 +57,7 @@ import {
 type TabView = 'overview' | 'map' | 'fleet' | 'consensus' | 'tasks' | 'benchmark';
 
 export default function DashboardPage() {
+  const { user } = useSynroAuth();
   const [activeTab, setActiveTab] = useState<TabView>('overview');
   const [middleView, setMiddleView] = useState<'map' | 'chart'>('map');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -324,7 +327,7 @@ export default function DashboardPage() {
                 title="Operator ID"
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="font-mono text-[11px] font-bold text-[#1d1d1f]">ID: OP-8492</span>
+                <span className="font-mono text-[11px] font-bold text-[#1d1d1f]">ID: {user?.id || 'OP-8492'}</span>
               </button>
             </div>
 
@@ -363,6 +366,18 @@ export default function DashboardPage() {
                 <Shield className="w-3.5 h-3.5 text-emerald-600" />
               </button>
 
+              {/* Operator Sign In / Switch Badge */}
+              <Link
+                href="/login"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-black/[0.06] shadow-xs text-xs font-semibold text-[#1d1d1f] hover:bg-neutral-50 transition-all group"
+                title="Switch operator or manage login session"
+              >
+                <div className={`w-4 h-4 rounded-full bg-gradient-to-tr ${user?.avatarColor || 'from-[#1d1d1f] to-neutral-800'} text-white flex items-center justify-center text-[9px] font-black shadow-xs`}>
+                  {user?.initials || 'OP'}
+                </div>
+                <span className="group-hover:text-[#0071e3] transition-colors">{user?.name?.split(' ')[0] || 'Operator'}</span>
+              </Link>
+
               <SupabaseStatus />
             </div>
           </div>
@@ -377,7 +392,7 @@ export default function DashboardPage() {
                 <>
                   <div className="flex items-center gap-2">
                     <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1d1d1f]">
-                      Welcome back, Salung
+                      Welcome back, {user?.name?.split(' ')[0] || 'Salung'}
                     </h1>
                     <span className="text-[10px] font-bold bg-blue-50 text-[#0071e3] border border-blue-200/80 px-2 py-0.5 rounded-full uppercase">
                       Synro Core
