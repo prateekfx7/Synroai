@@ -14,7 +14,8 @@ import {
 } from '@/types/warehouse';
 
 // Modern Reference UI Components
-import { ModernHeader, ModernTab } from '@/components/dashboard/ModernHeader';
+import { ModernHeader } from '@/components/dashboard/ModernHeader';
+import { SynroSidebar, ModernTab } from '@/components/dashboard/SynroSidebar';
 import { ModernKpiCards } from '@/components/dashboard/ModernKpiCards';
 import { RecentMissionsCard } from '@/components/dashboard/RecentMissionsCard';
 import { AutomationProtocolsCard } from '@/components/dashboard/AutomationProtocolsCard';
@@ -60,6 +61,7 @@ import {
 export default function DashboardPage() {
   const { user } = useSynroAuth();
   const [activeTab, setActiveTab] = useState<ModernTab>('overview');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const [robots, setRobots] = useState<RobotState[]>([]);
   const [tasks, setTasks] = useState<WarehouseTask[]>([]);
@@ -256,21 +258,38 @@ export default function DashboardPage() {
   const inspectedRobot = robots.find((r) => r.id === selectedRobotId) || null;
 
   return (
-    <div className="min-h-screen bg-[#edf0f4] text-slate-900 font-sans antialiased selection:bg-[#ff334b] selection:text-white pb-12">
-      {/* Outer Centered Shell */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
-        
-        {/* ================= 1. TOP NAVBAR (Matching Reference Image) ================= */}
-        <ModernHeader
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          user={user}
-          onOpenNewTask={() => setIsDispatchModalOpen(true)}
-          onOpenSearch={() => setIsCommandPaletteOpen(true)}
-          onOpenNotifications={() => setIsNotificationOpen(true)}
-          onOpenMenu={() => setIsChaosLabOpen(true)}
-          onOpenOperatorModal={() => setIsOperatorModalOpen(true)}
-        />
+    <div className="min-h-screen bg-[#edf0f4] text-slate-900 font-sans antialiased selection:bg-[#ff334b] selection:text-white flex">
+      {/* ================= 1. SIDEBAR (Collapsible, Open & Close) ================= */}
+      <SynroSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        user={user}
+        activeRobotCount={onlineRobotsCount}
+        totalTasks={tasks.length}
+        onOpenNewTask={() => setIsDispatchModalOpen(true)}
+        onOpenProtocolSpec={() => setIsProtocolModalOpen(true)}
+        onOpenChaosLab={() => setIsChaosLabOpen(true)}
+        onOpenOperatorModal={() => setIsOperatorModalOpen(true)}
+      />
+
+      {/* ================= 2. MAIN VIEW AREA ================= */}
+      <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-x-hidden">
+        {/* Outer Centered Shell */}
+        <div className="max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-5 pb-12">
+          {/* Top Header with Sidebar Toggle */}
+          <ModernHeader
+            isSidebarOpen={isSidebarOpen}
+            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+            user={user}
+            onOpenNewTask={() => setIsDispatchModalOpen(true)}
+            onOpenSearch={() => setIsCommandPaletteOpen(true)}
+            onOpenNotifications={() => setIsNotificationOpen(true)}
+            onOpenMenu={() => setIsChaosLabOpen(true)}
+            onOpenOperatorModal={() => setIsOperatorModalOpen(true)}
+          />
 
 
         {/* ================= 2. GREETING & STATUS BAR ================= */}
@@ -809,6 +828,7 @@ export default function DashboardPage() {
           <span>{toastMessage}</span>
         </div>
       )}
+      </div>
     </div>
   );
 }
