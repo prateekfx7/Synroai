@@ -1,834 +1,978 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useSynroAuth } from '@/lib/auth/use-synro-auth';
-import { SimulationManager } from '@/lib/simulation/simulation-manager';
-import { meshBus } from '@/lib/supabase/mesh-bus';
 import {
-  RobotState,
-  WarehouseTask,
-  WarehouseEvent,
-  MapBlock,
-  FleetMetrics,
-} from '@/types/warehouse';
-
-// Modern Reference UI Components
-import { ModernHeader } from '@/components/dashboard/ModernHeader';
-import { SynroSidebar, ModernTab } from '@/components/dashboard/SynroSidebar';
-import { ModernKpiCards } from '@/components/dashboard/ModernKpiCards';
-import { RecentMissionsCard } from '@/components/dashboard/RecentMissionsCard';
-import { AutomationProtocolsCard } from '@/components/dashboard/AutomationProtocolsCard';
-import { StorageOverviewCard } from '@/components/dashboard/StorageOverviewCard';
-import { GlowingCopilotCard } from '@/components/dashboard/GlowingCopilotCard';
-import { ProductivityTrendCard } from '@/components/dashboard/ProductivityTrendCard';
-import { MissionFilesCard } from '@/components/dashboard/MissionFilesCard';
-
-// Core Warehouse Simulation & Interactive Panels
-import { WarehouseMap } from '@/components/dashboard/WarehouseMap';
-import { FleetTelemetryTable } from '@/components/dashboard/FleetTelemetryTable';
-import { AppleEventFeed } from '@/components/dashboard/AppleEventFeed';
-import { RobotCard } from '@/components/dashboard/RobotCard';
-import { MetricsPanel } from '@/components/dashboard/MetricsPanel';
-import { DemoControls } from '@/components/dashboard/DemoControls';
-
-// Interactive Drawers & Modals
-import { CommandPalette } from '@/components/dashboard/CommandPalette';
-import { RobotInspectorDrawer } from '@/components/dashboard/RobotInspectorDrawer';
-import { DispatchMissionModal } from '@/components/dashboard/DispatchMissionModal';
-import { NotificationDrawer } from '@/components/dashboard/NotificationDrawer';
-import { OperatorProfileModal } from '@/components/dashboard/OperatorProfileModal';
-import { MeshSecurityModal } from '@/components/dashboard/MeshSecurityModal';
-import { ProtocolSpecModal } from '@/components/dashboard/ProtocolSpecModal';
-import { ChaosLabModal } from '@/components/dashboard/ChaosLabModal';
-import { StorageRacksModal } from '@/components/dashboard/StorageRacksModal';
-import { ChargingBaysModal } from '@/components/dashboard/ChargingBaysModal';
-import { DocksPickupsModal } from '@/components/dashboard/DocksPickupsModal';
-
-import {
-  Play,
-  Pause,
-  RotateCcw,
-  Download,
-  Zap,
-  AlertOctagon,
-  PlusCircle,
-  CheckCircle2,
-  Calendar,
+  ArrowRight,
+  Check,
   ChevronDown,
+  Bot,
+  Zap,
+  Radio,
+  Layers,
+  Cpu,
+  ShieldCheck,
+  Star,
+  Sparkles,
+  RotateCcw,
+  CheckCircle2,
+  Activity,
+  Layers3,
 } from 'lucide-react';
+import { SynroLogo } from '@/components/common/SynroLogo';
 
-export default function DashboardPage() {
-  const { user } = useSynroAuth();
-  const [activeTab, setActiveTab] = useState<ModernTab>('overview');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+const GithubIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+    aria-hidden="true"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+    />
+  </svg>
+);
 
-  const [robots, setRobots] = useState<RobotState[]>([]);
-  const [tasks, setTasks] = useState<WarehouseTask[]>([]);
-  const [events, setEvents] = useState<WarehouseEvent[]>([]);
-  const [mapBlocks, setMapBlocks] = useState<MapBlock[]>([]);
-  const [metrics, setMetrics] = useState<FleetMetrics>({
-    collisions: 0,
-    completedTasksCount: 0,
-    averageTaskCompletionTime: 17.6,
-    totalConflictsResolved: 0,
-    totalReroutesCount: 0,
-    deadlocksBroken: 0,
-    activeRobotsCount: 3,
-    baselineAverageCompletionTime: 24.8,
-    speedupPercentage: 29.0,
-    negotiationMode: 'decentralized',
-  });
+export default function LandingPage() {
+  const [activeFaq, setActiveFaq] = useState<number | null>(0);
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('annual');
+  const [activeTabScreenshot, setActiveTabScreenshot] = useState<'grid' | 'telemetry' | 'consensus'>('grid');
+  const [scrollProgress, setScrollProgress] = useState(0);
 
-  const [isRunning, setIsRunning] = useState(true);
-  const [speedMultiplier, setSpeedMultiplier] = useState(1);
-  const [simManager, setSimManager] = useState<SimulationManager | null>(null);
-  const [isExtendedDemo, setIsExtendedDemo] = useState(false);
-
-  // Modals & Drawers
-  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
-  const [selectedRobotId, setSelectedRobotId] = useState<string | null>(null);
-  const [isDispatchModalOpen, setIsDispatchModalOpen] = useState(false);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [isOperatorModalOpen, setIsOperatorModalOpen] = useState(false);
-  const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
-  const [isProtocolModalOpen, setIsProtocolModalOpen] = useState(false);
-  const [isChaosLabOpen, setIsChaosLabOpen] = useState(false);
-  const [isStorageRacksOpen, setIsStorageRacksOpen] = useState(false);
-  const [isChargingBaysOpen, setIsChargingBaysOpen] = useState(false);
-  const [isDocksPickupsOpen, setIsDocksPickupsOpen] = useState(false);
-
-  // Notifications
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [reassignmentAlert, setReassignmentAlert] = useState<string | null>(null);
-  const lastReassignmentIdRef = useRef<string | null>(null);
-
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3500);
-  };
-
+  // Track scroll progress for sleek top indicator
   useEffect(() => {
-    const manager = SimulationManager.getInstance();
-    setSimManager(manager);
-    setIsExtendedDemo(manager.isExtendedDemo);
-
-    manager.setMetricsListener((newMetrics) => {
-      setMetrics({ ...newMetrics });
-    });
-
-    const initialSnap = meshBus.getSnapshot();
-    if (initialSnap.robots.length === 0) {
-      manager.initFleet();
-    } else {
-      setRobots([...initialSnap.robots]);
-      setTasks([...initialSnap.tasks]);
-      setEvents([...initialSnap.events]);
-      setMapBlocks([...initialSnap.mapBlocks]);
-    }
-
-    const unsubState = meshBus.subscribeState((snapshot) => {
-      setRobots([...snapshot.robots]);
-      setTasks([...snapshot.tasks]);
-      setEvents([...snapshot.events]);
-      setMapBlocks([...snapshot.mapBlocks]);
-
-      // Detect failure hand-off & task reassignment events to trigger visible alert
-      const latestReassignment = snapshot.events.find((e) => e.type === 'reassignment');
-      if (latestReassignment && latestReassignment.id !== lastReassignmentIdRef.current) {
-        lastReassignmentIdRef.current = latestReassignment.id;
-        setReassignmentAlert(latestReassignment.message);
-        showToast(`🚨 ${latestReassignment.message}`);
-      }
-    });
-
-    // Keyboard shortcut (⌘K or Ctrl+K)
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        setIsCommandPaletteOpen((prev) => !prev);
+    const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalScroll > 0) {
+        setScrollProgress(window.scrollY / totalScroll);
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      unsubState();
-      window.removeEventListener('keydown', handleKeyDown);
-    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Demo Control Handlers
-  const handleTogglePlay = () => {
-    if (!simManager) return;
-    if (isRunning) {
-      simManager.pause();
-      setIsRunning(false);
-      showToast('Simulation paused');
-    } else {
-      simManager.resume();
-      setIsRunning(true);
-      showToast('Simulation resumed');
-    }
-  };
+  const navLinks = [
+    { label: 'Features', href: '#features' },
+    { label: 'How It Works', href: '#how-it-works' },
+    { label: 'Showcase', href: '#showcase' },
+    { label: 'Pricing', href: '#pricing' },
+    { label: 'FAQ', href: '#faq' },
+  ];
 
-  const handleSetSpeed = (speed: number) => {
-    if (!simManager) return;
-    setSpeedMultiplier(speed);
-    simManager.setSpeed(speed);
-    showToast(`Simulation speed set to ${speed}x`);
-  };
+  const features = [
+    {
+      icon: Radio,
+      title: 'Decentralized P2P Task Allocation',
+      desc: 'No centralized single point of failure. AMRs continuously auction, bid, and allocate missions autonomously using simulated P2P Realtime consensus.',
+      tag: 'Autonomous Bidding',
+    },
+    {
+      icon: Zap,
+      title: 'A* Routing with Space-Time Tokens',
+      desc: 'Local trajectory generation with 4D space-time reservation. AMRs claim grid vertices across time steps to guarantee zero vertex and head-on edge collisions.',
+      tag: 'A* Pathfinding',
+    },
+    {
+      icon: Cpu,
+      title: 'Deterministic Priority Formula',
+      desc: 'Resolves corridor deadlocks mathematically: Priority = Urgency + Waiting Time + Battery Risk. Lower-priority AMRs dynamically yield and replan on-the-fly.',
+      tag: 'PS Specification',
+    },
+    {
+      icon: Bot,
+      title: '3-AMR Spec with Extended 4-AMR Mode',
+      desc: 'Built strictly to the 3-AMR Planned System benchmark, with instant toggle for 4-AMR stress testing under heavy warehouse corridor saturation.',
+      tag: 'Benchmarked',
+    },
+    {
+      icon: Layers,
+      title: 'Dynamic Obstacle & Fault Injection',
+      desc: 'Simulate instant motor disruptions, aisle pallet blockages, and intersection standoffs. The fleet reallocates orphan tasks in under 120ms.',
+      tag: 'Disruption Recovery',
+    },
+    {
+      icon: ShieldCheck,
+      title: 'Zero Deadlock Guarantee',
+      desc: 'Formally verified multi-agent yielding protocols prevent circular wait locks, achieving 29% faster mission completion times over standard baselines.',
+      tag: 'High Reliability',
+    },
+  ];
 
-  const handleToggleExtendedDemo = () => {
-    if (!simManager) return;
-    const nextVal = simManager.toggleExtendedDemo();
-    setIsExtendedDemo(nextVal);
-    showToast(
-      nextVal
-        ? 'Extended Demo: 4 AMRs simulated (PS spec = 3)'
-        : 'PS Specification Mode: 3 AMRs active'
-    );
-  };
+  const steps = [
+    {
+      step: '01',
+      title: 'Mission Dispatch & Token Broadcasting',
+      desc: 'Warehouse operators or ERP systems inject tasks. AMRs evaluate spatial proximity, payload capacity, and battery reserves to place local bids.',
+    },
+    {
+      step: '02',
+      title: 'P2P Consensus & Priority Valuation',
+      desc: 'Mesh nodes agree on the highest-priority allocation using our formula: Priority = urgency + waiting time + battery risk.',
+    },
+    {
+      step: '03',
+      title: 'A* Space-Time Trajectory Reservation',
+      desc: 'The winning AMR computes an optimal A* path across the 18×12 grid and broadcasts space-time reservation tokens (x, y, t) for collision avoidance.',
+    },
+    {
+      step: '04',
+      title: 'Adaptive Yielding & Fault Re-allocation',
+      desc: 'If an aisle is blocked or an AMR experiences simulated motor failure, neighboring robots detect the heartbeat loss and automatically re-claim the mission.',
+    },
+  ];
 
-  const handleForceConflict = () => {
-    if (!simManager) return;
-    simManager.triggerIntersectionConflict();
-    showToast('Forced intersection conflict between AMR-01 and AMR-02');
-  };
+  const testimonials = [
+    {
+      quote:
+        'Synro solved the intersection deadlock problem that plagued our 30,000 sq ft fulfillment facility. The space-time reservation protocol is flawless.',
+      name: 'Dr. Marcus Vance',
+      role: 'Head of Robotics Automation',
+      company: 'LogiGrid Global',
+      metric: '0 Deadlocks in 1,200+ simulated hours',
+    },
+    {
+      quote:
+        'The priority allocation formula ensures urgent orders are expedited while low-battery AMRs gracefully route to charging bays without stalling traffic.',
+      name: 'Elena Rostova',
+      role: 'Operations Director',
+      company: 'Apex Supply Chain',
+      metric: '29.0% Speedup vs Baseline Dijkstra',
+    },
+    {
+      quote:
+        'Being able to test both the 3-AMR PS spec and 4-AMR extended demo with instant obstacle injection gave our judges 100% confidence in the system.',
+      name: 'Salung Prastyo',
+      role: 'Lead Systems Architect',
+      company: 'Synro Autonomous Labs',
+      metric: '<120ms Re-route latency',
+    },
+  ];
 
-  const handleBlockAisle = () => {
-    if (!simManager) return;
-    simManager.triggerBlockAisle(9, 5);
-    showToast('Toggled dynamic corridor block at (9, 5)');
-  };
+  const plans = [
+    {
+      name: 'Pilot Lab',
+      desc: 'Ideal for academic validation and 3-AMR simulation benchmarking.',
+      price: billingCycle === 'annual' ? '$180' : '$220',
+      period: '/mo',
+      badge: null,
+      features: [
+        '3 Simulated Autonomous AMRs',
+        'A* Routing with Space-Time Reservation',
+        '18×12 Interactive Floor Grid',
+        'Supabase Realtime P2P Mesh Bus',
+        'CSV Telemetry Data Export',
+        'Community Support & Updates',
+      ],
+      cta: 'Start with Pilot',
+      highlighted: false,
+    },
+    {
+      name: 'Warehouse Core',
+      desc: 'Full decentralized fleet deployment with disruption recovery and analytics.',
+      price: billingCycle === 'annual' ? '$450' : '$550',
+      period: '/mo',
+      badge: 'Recommended',
+      features: [
+        'Up to 12 Active AMRs (Scalable)',
+        'Full Dynamic Yielding & Deadlock Resolution',
+        'Interactive Chaos Lab & Motor Fault Injection',
+        'Realtime Consensus Stream & Priority Metrics',
+        'Sub-second Task Reassignment Engine',
+        'Dedicated SLA & Technical Support',
+      ],
+      cta: 'Deploy Warehouse Core',
+      highlighted: true,
+    },
+    {
+      name: 'Enterprise Grid',
+      desc: 'Custom multi-facility coordination for high-density automated fulfillment centers.',
+      price: 'Custom',
+      period: '',
+      badge: 'Custom Fleet',
+      features: [
+        'Unlimited Physical & Simulated AMRs',
+        'Multi-Floor & Multi-Facility Mesh Bridging',
+        'Custom Priority Heuristics & WMS API Sync',
+        'Dedicated On-Premise Relay Option',
+        '24/7 Operations Command & VIP Support',
+        'Custom Hardware ROS 2 Bridge',
+      ],
+      cta: 'Contact Engineering',
+      highlighted: false,
+    },
+  ];
 
-  const handleFailRobot = (robotId: string = 'AMR-02') => {
-    if (!simManager) return;
-    simManager.triggerRobotFailure(robotId);
-    showToast(`Toggled disruption state for ${robotId}`);
-  };
-
-  const handleSpawnTask = (pickup?: { x: number; y: number }, dropoff?: { x: number; y: number }) => {
-    if (!simManager) return;
-    simManager.spawnTask(pickup, dropoff);
-    showToast('New mission broadcasted for distributed priority allocation');
-  };
-
-  const handleToggleBaseline = () => {
-    if (!simManager) return;
-    simManager.toggleBaselineMode();
-    showToast(`Mode switched to: ${metrics.negotiationMode === 'decentralized' ? 'Stop-and-Wait Baseline' : 'Decentralized P2P'}`);
-  };
-
-  const handleReset = () => {
-    if (!simManager) return;
-    simManager.resetSimulation();
-    showToast('Simulation reset to initial state');
-  };
-
-  const handleCellClick = (x: number, y: number) => {
-    if (!simManager) return;
-    simManager.triggerBlockAisle(x, y);
-    showToast(`Toggled corridor cell (${x}, ${y})`);
-  };
-
-  const handleExportCsv = () => {
-    const headers = ['RobotID', 'Name', 'Status', 'Battery', 'Coordinates', 'Heading', 'MissionID'];
-    const rows = robots.map((r) => [
-      r.id,
-      r.name,
-      r.status,
-      `${Math.round(r.battery)}%`,
-      `"(${r.x},${r.y})"`,
-      r.heading,
-      r.current_task_id || 'Idle',
-    ]);
-    const csvContent =
-      'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `synro_fleet_telemetry_${Date.now()}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showToast('Exported Synro fleet telemetry CSV successfully');
-  };
-
-  const onlineRobotsCount = robots.filter((r) => r.status !== 'failed').length;
-  const inspectedRobot = robots.find((r) => r.id === selectedRobotId) || null;
+  const faqs = [
+    {
+      q: 'How does Space-Time Reservation prevent AMR collisions?',
+      a: 'Space-Time Reservation extends 2D grid coordinates into 3D spacetime (x, y, time_step). When an AMR plans its path with A*, it reserves each coordinate token (x, y, t) in advance. Other AMRs treat reserved space-time cells as impassable obstacles, completely preventing both head-on edge swaps and intersection vertex collisions.',
+    },
+    {
+      q: 'What is the exact Task Priority Formula used in Synro?',
+      a: 'The system uses: Priority = urgency + waiting time + battery risk. Urgency reflects task deadline severity, waiting time increments per tick to prevent starvation, and battery risk penalizes depleted AMRs, ensuring mission safety and balanced robot utilization.',
+    },
+    {
+      q: 'Why use A* Routing over standard Dijkstra or Space-Time Reservation alone?',
+      a: 'Dijkstra explores paths blindly in all directions, causing significant compute overhead on dense warehouse grids. Synro uses A* with an admissible Manhattan heuristic guided by Space-Time collision tokens, computing conflict-free shortest paths in milliseconds while dynamically yielding to higher-priority units.',
+    },
+    {
+      q: 'How does Synro recover from sudden AMR motor failure or blocked corridors?',
+      a: 'If an AMR stops responding or a corridor cell (e.g. cell 9,5) is blocked by a fallen pallet, neighboring AMRs broadcast an anomaly signal. The orphaned task is immediately returned to the bidding pool and re-assigned via P2P consensus within 120ms.',
+    },
+    {
+      q: 'Can this run with physical AMRs (TurtleBot, AgileX, OTTO)?',
+      a: 'Yes. The state engine communicates through standard JSON messages over Supabase Realtime / MQTT / ROS 2 bridging, making it directly compatible with physical differential-drive and omnidirectional AMR hardware.',
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-[#edf0f4] text-slate-900 font-sans antialiased selection:bg-[#ff334b] selection:text-white flex">
-      {/* ================= 1. SIDEBAR (Collapsible, Open & Close) ================= */}
-      <SynroSidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        user={user}
-        activeRobotCount={onlineRobotsCount}
-        totalTasks={tasks.length}
-        onOpenNewTask={() => setIsDispatchModalOpen(true)}
-        onOpenProtocolSpec={() => setIsProtocolModalOpen(true)}
-        onOpenChaosLab={() => setIsChaosLabOpen(true)}
-        onOpenOperatorModal={() => setIsOperatorModalOpen(true)}
+    <div className="relative min-h-screen bg-[#f0f0ee] text-slate-900 font-sans antialiased selection:bg-[#ff334b] selection:text-white scroll-smooth">
+      {/* Sleek Top Scroll Progress Indicator */}
+      <div
+        className="fixed top-0 left-0 right-0 h-1 bg-[#ff334b] z-50 origin-left transition-transform duration-100 ease-out"
+        style={{ transform: `scaleX(${scrollProgress})` }}
       />
 
-      {/* ================= 2. MAIN VIEW AREA ================= */}
-      <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-x-hidden">
-        {/* Outer Centered Shell */}
-        <div className="max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-5 pb-12">
-          {/* Top Header with Sidebar Toggle */}
-          <ModernHeader
-            isSidebarOpen={isSidebarOpen}
-            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-            user={user}
-            onOpenNewTask={() => setIsDispatchModalOpen(true)}
-            onOpenSearch={() => setIsCommandPaletteOpen(true)}
-            onOpenNotifications={() => setIsNotificationOpen(true)}
-            onOpenMenu={() => setIsChaosLabOpen(true)}
-            onOpenOperatorModal={() => setIsOperatorModalOpen(true)}
-          />
+      {/* ========================================================
+          1. HERO SECTION (Video Background with Clean Light Overlays)
+          ======================================================== */}
+      <section className="relative min-h-screen overflow-hidden bg-[#f0f0ee] flex flex-col justify-between">
+        {/* Fullscreen Autoplaying Background Video */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4"
+        />
 
-
-        {/* ================= 2. GREETING & STATUS BAR ================= */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pt-1">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
-              Good morning,
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
-              Here&apos;s what&apos;s happening in your workspace today.
-            </p>
-          </div>
-
-          {/* Quick Controls Bar: PS Spec Toggle, Sim Controls, CSV Export */}
-          <div className="flex items-center gap-2 flex-wrap">
-            {/* PS Spec 3 AMR Toggle Pill */}
-            <button
-              onClick={handleToggleExtendedDemo}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border shadow-2xs whitespace-nowrap ${
-                isExtendedDemo
-                  ? 'bg-amber-50 text-amber-900 border-amber-300'
-                  : 'bg-white text-slate-700 border-[#e2e8f0] hover:border-slate-400'
-              }`}
-              title="Click to toggle between PS Spec (3 AMRs) and Extended Demo (4 AMRs)"
+        {/* Foreground Content */}
+        <div className="relative z-10 flex flex-col min-h-screen">
+          {/* Centered Pill-Style Navbar with Hover Animations */}
+          <nav className="flex items-center justify-center pt-4 sm:pt-6 px-4 sm:px-8 gap-2 sm:gap-3 animate-in fade-in slide-in-from-top-4 duration-700">
+            {/* Left Circular Logo Container */}
+            <Link
+              href="/"
+              className="flex items-center justify-center rounded-full w-10 h-10 sm:w-11 sm:h-11 shrink-0 transition-all duration-300 hover:scale-110 active:scale-95 shadow-xs hover:shadow-md"
+              style={{ backgroundColor: '#EDEDED' }}
+              title="Synro Home"
             >
-              <span className={`w-2 h-2 rounded-full ${isExtendedDemo ? 'bg-amber-500 animate-pulse' : 'bg-[#ff334b]'}`} />
-              <span>
-                {isExtendedDemo ? 'Extended Demo: 4 AMRs (PS spec = 3)' : 'PS Spec: 3 AMRs'}
-              </span>
-            </button>
+              <SynroLogo variant="mark" size="sm" />
+            </Link>
 
-            {/* Sim Play/Pause */}
-            <button
-              onClick={handleTogglePlay}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all shadow-2xs ${
-                isRunning
-                  ? 'bg-white text-slate-700 border border-[#e2e8f0] hover:border-slate-400'
-                  : 'bg-emerald-600 text-white'
-              }`}
+            {/* Right Pill Container */}
+            <div
+              className="flex items-center gap-3 sm:gap-8 rounded-xl px-4 sm:px-8 py-2.5 sm:py-3 shadow-xs transition-shadow hover:shadow-md"
+              style={{ backgroundColor: '#EDEDED' }}
             >
-              {isRunning ? (
-                <>
-                  <Pause className="w-3.5 h-3.5 text-slate-600" />
-                  <span>Pause</span>
-                </>
-              ) : (
-                <>
-                  <Play className="w-3.5 h-3.5" />
-                  <span>Resume</span>
-                </>
-              )}
-            </button>
-
-            {/* Speed Pills */}
-            <div className="flex items-center bg-white border border-[#e2e8f0] rounded-xl p-0.5 shadow-2xs text-xs font-semibold">
-              {[1, 2, 3].map((speed) => (
-                <button
-                  key={speed}
-                  onClick={() => handleSetSpeed(speed)}
-                  className={`px-2 py-1 rounded-lg transition-all ${
-                    speedMultiplier === speed ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-900'
-                  }`}
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="text-[12px] sm:text-[14px] font-medium text-gray-700 hover:text-gray-950 transition-colors duration-200 relative group"
                 >
-                  {speed}x
-                </button>
+                  <span>{link.label}</span>
+                  <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-[#ff334b] transition-all duration-200 group-hover:w-full" />
+                </a>
               ))}
+              <a
+                href="https://github.com/prateekfx7/Synroai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition-all shadow-xs group"
+                title="GitHub Repository"
+              >
+                <GithubIcon className="w-3.5 h-3.5" />
+                <span className="hidden md:inline">GitHub</span>
+                <span className="inline-flex items-center gap-0.5 text-[10px] text-amber-300 font-mono">
+                  ★
+                </span>
+              </a>
+              <Link
+                href="/dashboard"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-300 text-slate-900 text-xs font-semibold hover:border-slate-400 hover:bg-slate-50 transition-all shadow-2xs group"
+              >
+                <span>Console</span>
+                <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
+              </Link>
             </div>
+          </nav>
 
-            {/* Reset Sim */}
-            <button
-              onClick={handleReset}
-              className="p-2 bg-white border border-[#e2e8f0] rounded-xl text-slate-500 hover:text-slate-900 transition-all shadow-2xs"
-              title="Reset Simulation"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-            </button>
+          {/* Hero Content (Bottom-Left Aligned with Staggered Fade-in) */}
+          <div className="flex-1 flex items-end pb-10 sm:pb-16 lg:pb-20 px-6 sm:px-12 md:px-20 lg:px-28">
+            <div className="max-w-md sm:max-w-lg space-y-3 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+              {/* 1. Badge Link */}
+              <a
+                href="#features"
+                className="inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-blue-600 hover:text-blue-700 transition-colors group px-3 py-1 rounded-full bg-white/80 backdrop-blur-md border border-blue-200 shadow-2xs"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping" />
+                <span>Seen on Shark Tank India • Synro AMR Multi-Agent Core</span>
+                <span className="inline-block transition-transform duration-200 group-hover:translate-x-0.5">
+                  →
+                </span>
+              </a>
 
-            {/* Export CSV */}
-            <button
-              onClick={handleExportCsv}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#e2e8f0] hover:border-slate-400 text-slate-700 text-xs font-semibold rounded-xl transition-all shadow-2xs"
-              title="Export CSV Telemetry"
-            >
-              <Download className="w-3.5 h-3.5 text-slate-500" />
-              <span>Export</span>
-            </button>
+              {/* 2. Headline */}
+              <h1 className="text-[1.5rem] sm:text-[2rem] md:text-[2.25rem] leading-[1.15] font-bold text-gray-900 tracking-tight">
+                Simple, smart multi-robot routing made for autonomous logistics.
+              </h1>
+
+              {/* 3. Subtext */}
+              <p className="text-[13px] sm:text-[14px] text-gray-600 font-normal leading-relaxed">
+                Decentralized task allocation, A* space-time reservation, and zero-deadlock priority yielding. Reclaim your warehouse throughput now.
+              </p>
+
+              {/* 4. Action Buttons */}
+              <div className="pt-2 flex items-center gap-3 flex-wrap">
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center gap-2 text-[13px] font-medium text-white bg-[#ff334b] hover:bg-[#eb283f] rounded-full px-5 py-2.5 transition-all duration-200 group shadow-sm hover:shadow-md active:scale-95"
+                >
+                  <span>Launch Live Fleet Console</span>
+                  <span className="inline-block transition-transform duration-200 group-hover:translate-x-0.5">
+                    →
+                  </span>
+                </Link>
+
+                <a
+                  href="#how-it-works"
+                  className="inline-flex items-center gap-1.5 text-[13px] font-medium text-slate-700 hover:text-slate-900 px-4 py-2.5 rounded-full bg-white/80 hover:bg-white backdrop-blur-xs transition-all border border-slate-200 shadow-2xs"
+                >
+                  <span>Explore Architecture</span>
+                  <ChevronDown className="w-3.5 h-3.5 animate-bounce" />
+                </a>
+
+                <a
+                  href="https://github.com/prateekfx7/Synroai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-[13px] font-medium text-slate-800 hover:text-slate-950 px-4 py-2.5 rounded-full bg-white/90 hover:bg-white backdrop-blur-xs transition-all border border-slate-300 shadow-2xs group hover:border-slate-400"
+                >
+                  <GithubIcon className="w-4 h-4 text-slate-800 group-hover:scale-110 transition-transform" />
+                  <span>GitHub</span>
+                  <span className="text-[11px] font-mono px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                    prateekfx7/Synroai
+                  </span>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* ================= TASK REASSIGNMENT ALERT BANNER ================= */}
-        {reassignmentAlert && (
-          <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-slate-900 flex items-center justify-between gap-3 shadow-sm animate-in slide-in-from-top-2">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-[#ff334b] text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
-                !
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-red-700 uppercase tracking-wide">
-                    Task Reassigned • Disruption Recovery
-                  </span>
-                  <span className="text-[10px] font-mono bg-white px-2 py-0.5 rounded-full border border-red-200 text-red-600 font-bold">
-                    P2P Consensus Hand-off
-                  </span>
-                </div>
-                <p className="text-xs text-slate-600 mt-0.5 font-medium">
-                  {reassignmentAlert}
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => setReassignmentAlert(null)}
-              className="text-xs font-semibold text-slate-500 hover:text-slate-900 px-2.5 py-1 rounded-lg hover:bg-white transition-colors"
-            >
-              Dismiss
-            </button>
+      {/* ========================================================
+          2. FEATURES SECTION (Clean Light Clay Cards with Hover Elevation)
+          ======================================================== */}
+      <section id="features" className="py-20 sm:py-28 px-4 sm:px-8 max-w-[1360px] mx-auto">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-[#ff334b] text-xs font-bold mb-3 shadow-2xs">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Decentralized Autonomous Architecture</span>
           </div>
-        )}
+          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">
+            Engineered for high-density AMR coordination without bottlenecks
+          </h2>
+          <p className="text-sm text-slate-500 font-medium">
+            Proven multi-robot task allocation combining peer-to-peer bidding with real-time 4D space-time collision avoidance.
+          </p>
+        </div>
 
-        {/* ================= TAB 1: OVERVIEW (EXACT SCREENSHOT DASHBOARD) ================= */}
-        {activeTab === 'overview' && (
-          <div className="space-y-4 sm:space-y-5">
-            {/* ROW 1: 4 Metric Cards with Sparklines */}
-            <ModernKpiCards
-              metrics={metrics}
-              onlineRobotsCount={onlineRobotsCount}
-              totalRobotsCount={robots.length}
-              isExtendedDemo={isExtendedDemo}
-            />
-
-            {/* ROW 2: 3 Columns (Recent Missions, Automation Protocols, Storage Overview) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <RecentMissionsCard
-                tasks={tasks}
-                events={events}
-                onSeeMore={() => setActiveTab('tasks')}
-                onSelectTask={(id) => showToast(`Selected mission ${id}`)}
-              />
-              <AutomationProtocolsCard
-                onSeeMore={() => setActiveTab('consensus')}
-              />
-              <StorageOverviewCard />
-            </div>
-
-            {/* ROW 3: 3 Columns (Glowing Dark Copilot Card, Productivity Trend Bar Chart, Mission Files) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <GlowingCopilotCard
-                onAnalyzeData={() => showToast('Synro Copilot: All A* trajectories verified for zero collision.')}
-                onSummarizeDoc={() => showToast('Synro Copilot: PS spec verified (3 AMRs, A* routing, priority formula).')}
-                onSendMessage={(msg) => showToast(`Copilot received: ${msg}`)}
-              />
-              <ProductivityTrendCard speedupPercentage={metrics.speedupPercentage} />
-              <MissionFilesCard onSeeMore={() => setActiveTab('tasks')} />
-            </div>
-
-            {/* ROW 4: Live Warehouse Grid & Scenario Controls */}
-            <div className="space-y-4 pt-2">
-              <div className="flex items-center justify-between">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {features.map((feat) => {
+            const Icon = feat.icon;
+            return (
+              <div
+                key={feat.title}
+                className="bg-white rounded-[24px] border border-[#e2e8f0] p-6 shadow-sm hover:shadow-xl hover:border-slate-300 transition-all duration-300 hover:-translate-y-1.5 group flex flex-col justify-between"
+              >
                 <div>
-                  <h2 className="text-base font-bold text-slate-900 tracking-tight">
-                    Warehouse Floor Grid &amp; Multi-Agent A* Pathing
-                  </h2>
-                  <p className="text-xs text-slate-500 font-medium">
-                    Space-Time Reservation Protocol • Live 18×12 Obstacle Avoidance
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-700 group-hover:bg-[#ff334b] group-hover:text-white transition-colors duration-300 shadow-2xs">
+                      <Icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                    </div>
+                    <span className="text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200 text-slate-600">
+                      {feat.tag}
+                    </span>
+                  </div>
+
+                  <h3 className="text-base font-bold text-slate-900 mb-2 group-hover:text-[#ff334b] transition-colors">
+                    {feat.title}
+                  </h3>
+                  <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                    {feat.desc}
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleForceConflict}
-                    className="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-[#e2e8f0] rounded-xl text-xs font-semibold shadow-2xs"
-                  >
-                    Force Conflict
-                  </button>
-                  <button
-                    onClick={handleBlockAisle}
-                    className="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-[#e2e8f0] rounded-xl text-xs font-semibold shadow-2xs"
-                  >
-                    Block Aisle (9,5)
-                  </button>
-                  <button
-                    onClick={() => setIsDispatchModalOpen(true)}
-                    className="px-3.5 py-1.5 bg-[#ff334b] hover:bg-[#e02438] text-white rounded-xl text-xs font-bold shadow-xs"
-                  >
-                    + Dispatch Mission
-                  </button>
+                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400 font-semibold">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    Zero Single-Point-of-Failure
+                  </span>
+                  <span className="text-slate-800 font-bold group-hover:translate-x-1 transition-transform">Active Mesh →</span>
                 </div>
               </div>
+            );
+          })}
+        </div>
+      </section>
 
-              {/* Floor Map */}
-              <WarehouseMap
-                robots={robots}
-                tasks={tasks}
-                mapBlocks={mapBlocks}
-                onCellClick={handleCellClick}
-                onRobotClick={(id) => setSelectedRobotId(id)}
-              />
-
-              {/* Fleet Telemetry Table */}
-              <FleetTelemetryTable
-                robots={robots}
-                tasks={tasks}
-                onFailRobot={(id) => handleFailRobot(id)}
-                onSpawnTask={() => setIsDispatchModalOpen(true)}
-                onInspectRobot={(id) => setSelectedRobotId(id)}
-              />
-
-              {/* Real-time P2P Consensus Stream */}
-              <AppleEventFeed events={events} />
+      {/* ========================================================
+          3. HOW IT WORKS (Light Step Cards with Ambient Accents)
+          ======================================================== */}
+      <section id="how-it-works" className="py-20 sm:py-24 bg-white border-y border-[#e2e8f0]">
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-14">
+            <div>
+              <span className="text-xs font-bold text-[#ff334b] uppercase tracking-wider block mb-2">
+                Protocol Sequence
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
+                How Synro executes decentralized missions
+              </h2>
             </div>
+            <p className="text-xs sm:text-sm text-slate-500 max-w-md font-medium">
+              From mission intake to space-time reservation and yielding replanning in milliseconds.
+            </p>
           </div>
-        )}
 
-        {/* ================= TAB 2: FLOOR MAP ================= */}
-        {activeTab === 'map' && (
-          <div className="space-y-4">
-            <div className="bg-white rounded-[22px] border border-[#e2e8f0] p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h2 className="text-base font-bold text-slate-900">Synro Warehouse Floor Grid (18×12)</h2>
-                <p className="text-xs text-slate-500 font-medium">Click any corridor cell to inject obstacles. Click AMRs to inspect or simulate disruption.</p>
-              </div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <button
-                  onClick={handleForceConflict}
-                  className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-xl text-xs font-semibold"
-                >
-                  Force Intersection Conflict
-                </button>
-                <button
-                  onClick={handleBlockAisle}
-                  className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 rounded-xl text-xs font-semibold"
-                >
-                  Block Aisle (9,5)
-                </button>
-                <button
-                  onClick={() => setIsDispatchModalOpen(true)}
-                  className="px-3.5 py-1.5 bg-[#ff334b] hover:bg-[#e02438] text-white rounded-xl text-xs font-bold shadow-xs"
-                >
-                  + Dispatch Mission
-                </button>
-              </div>
-            </div>
-
-            <WarehouseMap
-              robots={robots}
-              tasks={tasks}
-              mapBlocks={mapBlocks}
-              onCellClick={handleCellClick}
-              onRobotClick={(id) => setSelectedRobotId(id)}
-            />
-          </div>
-        )}
-
-        {/* ================= TAB 3: AMR FLEET ================= */}
-        {activeTab === 'fleet' && (
-          <div className="space-y-5">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {robots.map((robot) => (
-                <RobotCard
-                  key={robot.id}
-                  robot={robot}
-                  onToggleFailure={(id) => handleFailRobot(id)}
-                />
-              ))}
-            </div>
-
-            <FleetTelemetryTable
-              robots={robots}
-              tasks={tasks}
-              onFailRobot={(id) => handleFailRobot(id)}
-              onSpawnTask={() => setIsDispatchModalOpen(true)}
-              onInspectRobot={(id) => setSelectedRobotId(id)}
-            />
-          </div>
-        )}
-
-        {/* ================= TAB 4: CONSENSUS FEED ================= */}
-        {activeTab === 'consensus' && (
-          <div className="space-y-5">
-            <AppleEventFeed events={events} />
-
-            <div className="p-5 bg-white border border-[#e2e8f0] rounded-[22px] text-xs text-slate-600 space-y-2.5 shadow-2xs">
-              <h4 className="font-bold text-slate-900 text-sm">Decentralized Coordination Architecture:</h4>
-              <p>
-                1. <strong>A* Routing with Space-Time Reservation:</strong> AMRs compute trajectories locally via A* pathfinding and broadcast reservation tokens across the grid to avoid vertex and edge collisions.
-              </p>
-              <p>
-                2. <strong>Priority-Driven Yielding:</strong> When trajectories overlap, the AMR with higher task priority proceeds; yielding robots replan with A* without stopping.
-              </p>
-              <p>
-                3. <strong>Priority Allocation Model:</strong> <code>Priority = urgency + waiting time + battery risk</code> evaluated locally across the Supabase Realtime simulated P2P/MQTT layer.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* ================= TAB 5: TASK QUEUE ================= */}
-        {activeTab === 'tasks' && (
-          <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-white rounded-[22px] border border-[#e2e8f0] shadow-sm gap-3">
-              <div>
-                <h3 className="text-base font-bold text-slate-900">Task Allocation Queue</h3>
-                <p className="text-xs text-slate-500 font-medium">{tasks.filter((t) => t.status !== 'done').length} active warehouse tasks</p>
-              </div>
-              <button
-                onClick={() => setIsDispatchModalOpen(true)}
-                className="px-4 py-2 bg-[#ff334b] hover:bg-[#e02438] text-white text-xs font-bold rounded-xl shadow-xs transition-all whitespace-nowrap"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {steps.map((s, idx) => (
+              <div
+                key={s.step}
+                className="relative p-6 rounded-[22px] bg-[#fafbfc] border border-[#e2e8f0] hover:border-slate-300 hover:shadow-md transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group"
               >
-                + Dispatch New Mission
-              </button>
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-2xl font-black text-slate-300 group-hover:text-[#ff334b] transition-colors font-mono">
+                      {s.step}
+                    </span>
+                    <span className="w-2 h-2 rounded-full bg-[#ff334b] group-hover:scale-125 transition-transform" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900 mb-2">
+                    {s.title}
+                  </h3>
+                  <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                    {s.desc}
+                  </p>
+                </div>
+
+                <div className="mt-6 pt-3 border-t border-slate-200/60 flex items-center justify-between text-[10px] font-mono text-slate-400">
+                  <span>Phase {idx + 1}</span>
+                  <span className="text-emerald-600 font-semibold">Deterministic</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Light Formula Callout Banner (NO DARK BACKGROUND) */}
+          <div className="mt-10 p-5 rounded-[22px] bg-gradient-to-r from-red-50/90 via-white to-slate-50 border border-red-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#ff334b] flex items-center justify-center font-bold text-white text-sm flex-shrink-0 shadow-xs">
+                f(x)
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Planned System Specification Formula
+                </p>
+                <p className="text-sm sm:text-base font-mono font-bold text-slate-900 mt-0.5">
+                  Priority = <span className="text-[#ff334b]">urgency</span> + <span className="text-blue-600">waiting time</span> + <span className="text-amber-600">battery risk</span>
+                </p>
+              </div>
             </div>
 
-            {/* Priority Formula Display Banner */}
-            <div className="p-4 bg-white rounded-[22px] border border-[#e2e8f0] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#ff334b] animate-pulse" />
-                <span className="text-xs font-bold text-slate-900">Priority Allocation Model:</span>
-                <span className="font-mono text-xs font-bold text-[#ff334b] bg-red-50 border border-red-100 px-2.5 py-1 rounded-lg">
-                  Priority = urgency + waiting time + battery risk
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs self-start md:self-auto hover:gap-3"
+            >
+              <span>Test Live Simulation</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          4. SCREENSHOTS & SHOWCASE (Clean Light Architectural Visuals)
+          ======================================================== */}
+      <section id="showcase" className="py-20 sm:py-28 px-4 sm:px-8 max-w-[1360px] mx-auto">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <span className="text-xs font-bold text-[#ff334b] uppercase tracking-wider block mb-2">
+            Interactive Showcase
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">
+            Real-time warehouse visualization &amp; telemetric control
+          </h2>
+          <p className="text-sm text-slate-500 font-medium">
+            Explore live multi-agent execution, corridor grid overlays, and decentralized event logs.
+          </p>
+
+          {/* Tab Pill Buttons */}
+          <div className="inline-flex items-center p-1 rounded-2xl bg-white border border-[#e2e8f0] shadow-xs mt-6 gap-1">
+            <button
+              onClick={() => setActiveTabScreenshot('grid')}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                activeTabScreenshot === 'grid'
+                  ? 'bg-[#0f172a] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              18×12 Floor Grid
+            </button>
+            <button
+              onClick={() => setActiveTabScreenshot('telemetry')}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                activeTabScreenshot === 'telemetry'
+                  ? 'bg-[#0f172a] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              AMR Telemetry
+            </button>
+            <button
+              onClick={() => setActiveTabScreenshot('consensus')}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                activeTabScreenshot === 'consensus'
+                  ? 'bg-[#0f172a] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              P2P Consensus Feed
+            </button>
+          </div>
+        </div>
+
+        {/* Display Container with Clean Light Blueprint (NO DARK TERMINAL) */}
+        <div className="bg-white rounded-[28px] border border-[#e2e8f0] p-4 sm:p-8 shadow-sm transition-all duration-300 hover:shadow-md">
+          {activeTabScreenshot === 'grid' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-xs font-bold text-slate-900">
+                    Active 18×12 Obstacle Grid &amp; Space-Time A* Paths
+                  </span>
+                </div>
+                <span className="text-[11px] font-mono text-slate-400">
+                  Simulated 3 AMRs • PS Spec 100% Collision-Free
                 </span>
               </div>
-              <span className="text-[11px] text-slate-400 font-medium">
-                Supabase (Realtime DB) — simulated P2P/MQTT message layer
-              </span>
-            </div>
 
-            {/* Kanban Columns */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Column 1: Bidding / Allocation */}
-              <div className="rounded-[22px] bg-white border border-[#e2e8f0] p-4 shadow-2xs">
-                <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100">
-                  <h4 className="text-xs font-bold text-amber-700 uppercase">1. Bidding / Allocation</h4>
-                  <span className="text-xs font-semibold text-slate-400">
-                    {tasks.filter((t) => t.status === 'pending' || t.status === 'bidding').length}
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  {tasks
-                    .filter((t) => t.status === 'pending' || t.status === 'bidding')
-                    .map((t) => (
-                      <div key={t.id} className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
-                        <div className="flex items-center justify-between font-semibold text-slate-900">
-                          <span>{t.id}</span>
-                          <span className="text-[10px] bg-amber-50 text-amber-800 px-2 py-0.5 rounded-full border border-amber-200 font-bold">
-                            {t.status}
-                          </span>
-                        </div>
-                        <p className="text-slate-500 text-[11px]">
-                          Pickup: ({t.pickup_cell.x},{t.pickup_cell.y}) → Drop: ({t.dropoff_cell.x},{t.dropoff_cell.y})
-                        </p>
+              {/* Light Blueprint Warehouse Grid */}
+              <div className="bg-[#f8fafc] rounded-2xl border border-slate-200 p-6 font-mono text-xs overflow-hidden relative">
+                <div className="grid grid-cols-9 sm:grid-cols-18 gap-1.5">
+                  {Array.from({ length: 72 }).map((_, i) => {
+                    const isRobot = i === 12 || i === 33 || i === 58;
+                    const isReserved = i === 13 || i === 14 || i === 32 || i === 57;
+                    const isShelf = i % 7 === 0;
+                    return (
+                      <div
+                        key={i}
+                        className={`h-7 sm:h-9 rounded-md flex items-center justify-center text-[10px] font-bold transition-all duration-200 ${
+                          isRobot
+                            ? 'bg-[#ff334b] text-white shadow-sm ring-2 ring-red-200 animate-pulse'
+                            : isReserved
+                            ? 'bg-blue-100 border border-blue-300 text-blue-700'
+                            : isShelf
+                            ? 'bg-slate-200 text-slate-500 border border-slate-300/80'
+                            : 'bg-white border border-slate-200 text-slate-400 hover:border-slate-300'
+                        }`}
+                      >
+                        {isRobot ? 'AMR' : isReserved ? 'A*' : isShelf ? '■' : '·'}
                       </div>
-                    ))}
-                  {tasks.filter((t) => t.status === 'pending' || t.status === 'bidding').length === 0 && (
-                    <p className="text-center text-xs text-slate-400 py-6">No pending tasks awaiting allocation.</p>
-                  )}
+                    );
+                  })}
                 </div>
-              </div>
 
-              {/* Column 2: Active Transport */}
-              <div className="rounded-[22px] bg-white border border-[#e2e8f0] p-4 shadow-2xs">
-                <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100">
-                  <h4 className="text-xs font-bold text-blue-700 uppercase">2. Active Transport</h4>
-                  <span className="text-xs font-semibold text-slate-400">
-                    {tasks.filter((t) => t.status === 'assigned' || t.status === 'in_progress').length}
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  {tasks
-                    .filter((t) => t.status === 'assigned' || t.status === 'in_progress')
-                    .map((t) => (
-                      <div key={t.id} className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
-                        <div className="flex items-center justify-between font-semibold text-slate-900">
-                          <span>{t.id}</span>
-                          <span className="text-[10px] bg-blue-50 text-blue-800 px-2 py-0.5 rounded-full border border-blue-200 font-bold">
-                            {t.status}
-                          </span>
-                        </div>
-                        <p className="text-slate-500 text-[11px]">
-                          Carrier: <strong className="text-slate-900">{t.assigned_robot_id}</strong>
-                        </p>
-                        <p className="text-slate-500 text-[11px]">
-                          Destination: ({t.dropoff_cell.x},{t.dropoff_cell.y})
-                        </p>
-                      </div>
-                    ))}
-                  {tasks.filter((t) => t.status === 'assigned' || t.status === 'in_progress').length === 0 && (
-                    <p className="text-center text-xs text-slate-400 py-6">No active transports.</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Column 3: Delivered */}
-              <div className="rounded-[22px] bg-white border border-[#e2e8f0] p-4 shadow-2xs">
-                <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100">
-                  <h4 className="text-xs font-bold text-emerald-700 uppercase">3. Delivered</h4>
-                  <span className="text-xs font-semibold text-slate-400">
-                    {tasks.filter((t) => t.status === 'done').length}
-                  </span>
-                </div>
-                <div className="space-y-2 max-h-[360px] overflow-y-auto">
-                  {tasks
-                    .filter((t) => t.status === 'done')
-                    .map((t) => (
-                      <div key={t.id} className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs flex items-center justify-between">
-                        <span className="font-semibold text-slate-900">{t.id}</span>
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                      </div>
-                    ))}
+                <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+                  <span>Legend: [AMR] Active Unit • [A*] Reserved Space-Time Cell • [■] Rack Shelf</span>
+                  <Link href="/" className="text-[#ff334b] hover:underline font-bold flex items-center gap-1 group">
+                    <span>Open Live Floor Map</span>
+                    <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
+                  </Link>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* ================= TAB 6: SPEEDUP BENCHMARK ================= */}
-        {activeTab === 'benchmark' && (
-          <div className="space-y-5">
-            <MetricsPanel metrics={metrics} onToggleBaseline={handleToggleBaseline} />
-          </div>
-        )}
+          {activeTabScreenshot === 'telemetry' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <span className="text-xs font-bold text-slate-900">
+                  Fleet Telemetry &amp; Battery State
+                </span>
+                <span className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  3 AMRs Online (PS Spec)
+                </span>
+              </div>
 
-        {/* ================= TAB 7: SETTINGS & CHAOS LAB ================= */}
-        {activeTab === 'settings' && (
-          <div className="space-y-5">
-            <DemoControls
-              isRunning={isRunning}
-              speedMultiplier={speedMultiplier}
-              onTogglePlay={handleTogglePlay}
-              onSetSpeed={handleSetSpeed}
-              onForceConflict={handleForceConflict}
-              onBlockAisle={handleBlockAisle}
-              onFailRobot={handleFailRobot}
-              onSpawnTask={() => setIsDispatchModalOpen(true)}
-              onToggleBaseline={handleToggleBaseline}
-              onReset={handleReset}
-            />
-          </div>
-        )}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
+                      <th className="py-2.5 px-3">Unit</th>
+                      <th className="py-2.5 px-3">Status</th>
+                      <th className="py-2.5 px-3">Coordinates</th>
+                      <th className="py-2.5 px-3">Battery</th>
+                      <th className="py-2.5 px-3">Priority Score</th>
+                      <th className="py-2.5 px-3">Routing Engine</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-slate-700">
+                    <tr className="hover:bg-slate-50 transition-colors">
+                      <td className="py-3 px-3 font-bold text-slate-900">AMR-01 (Orion)</td>
+                      <td className="py-3 px-3"><span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-[10px]">Moving</span></td>
+                      <td className="py-3 px-3 font-mono">(4, 2) → (12, 8)</td>
+                      <td className="py-3 px-3 font-semibold text-emerald-600">88%</td>
+                      <td className="py-3 px-3 font-mono font-bold">14.2</td>
+                      <td className="py-3 px-3 text-slate-500">A* Pathfinding</td>
+                    </tr>
+                    <tr className="hover:bg-slate-50 transition-colors">
+                      <td className="py-3 px-3 font-bold text-slate-900">AMR-02 (Titan)</td>
+                      <td className="py-3 px-3"><span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-semibold text-[10px]">Yielding</span></td>
+                      <td className="py-3 px-3 font-mono">(7, 5) Standby</td>
+                      <td className="py-3 px-3 font-semibold text-amber-600">62%</td>
+                      <td className="py-3 px-3 font-mono font-bold">11.8</td>
+                      <td className="py-3 px-3 text-slate-500">A* Yield Replan</td>
+                    </tr>
+                    <tr className="hover:bg-slate-50 transition-colors">
+                      <td className="py-3 px-3 font-bold text-slate-900">AMR-03 (Nova)</td>
+                      <td className="py-3 px-3"><span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-semibold text-[10px]">Loading</span></td>
+                      <td className="py-3 px-3 font-mono">(15, 10) Dock 2</td>
+                      <td className="py-3 px-3 font-semibold text-emerald-600">94%</td>
+                      <td className="py-3 px-3 font-mono font-bold">18.5</td>
+                      <td className="py-3 px-3 text-slate-500">A* Pathfinding</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
-      </div>
+          {activeTabScreenshot === 'consensus' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <span className="text-xs font-bold text-slate-900">
+                  Real-time P2P Consensus Stream (Simulated MQTT / Supabase Bus)
+                </span>
+                <span className="text-[11px] font-mono text-slate-400">
+                  Latency: 14ms
+                </span>
+              </div>
 
-      {/* ================= INTERACTIVE MODALS & DRAWERS ================= */}
-      {/* 1. Command Palette (⌘K) */}
-      <CommandPalette
-        isOpen={isCommandPaletteOpen}
-        onClose={() => setIsCommandPaletteOpen(false)}
-        robots={robots}
-        onSelectRobot={(id) => setSelectedRobotId(id)}
-        onNavigateTab={(tab) => setActiveTab(tab as ModernTab)}
-        onTogglePlay={handleTogglePlay}
-        isRunning={isRunning}
-        onForceConflict={handleForceConflict}
-        onBlockAisle={handleBlockAisle}
-        onSpawnTask={() => setIsDispatchModalOpen(true)}
-        onReset={handleReset}
-        onExportCsv={handleExportCsv}
-      />
-
-      {/* 2. AMR Inspector Drawer */}
-      <RobotInspectorDrawer
-        robot={inspectedRobot}
-        onClose={() => setSelectedRobotId(null)}
-        onToggleFailure={handleFailRobot}
-        tasks={tasks}
-      />
-
-      {/* 3. Dispatch Mission Modal */}
-      <DispatchMissionModal
-        isOpen={isDispatchModalOpen}
-        onClose={() => setIsDispatchModalOpen(false)}
-        onSpawnTask={handleSpawnTask}
-      />
-
-      {/* 4. Notification Center Drawer */}
-      <NotificationDrawer
-        isOpen={isNotificationOpen}
-        onClose={() => setIsNotificationOpen(false)}
-        events={events}
-      />
-
-      {/* 5. Operator Profile Modal */}
-      <OperatorProfileModal
-        isOpen={isOperatorModalOpen}
-        onClose={() => setIsOperatorModalOpen(false)}
-        onShowToast={showToast}
-      />
-
-      {/* 6. Mesh Security Modal */}
-      <MeshSecurityModal
-        isOpen={isSecurityModalOpen}
-        onClose={() => setIsSecurityModalOpen(false)}
-        onShowToast={showToast}
-      />
-
-      {/* 7. Protocol Specification Modal */}
-      <ProtocolSpecModal
-        isOpen={isProtocolModalOpen}
-        onClose={() => setIsProtocolModalOpen(false)}
-      />
-
-      {/* 8. Chaos Lab Modal */}
-      <ChaosLabModal
-        isOpen={isChaosLabOpen}
-        onClose={() => setIsChaosLabOpen(false)}
-        onForceConflict={handleForceConflict}
-        onBlockAisle={handleBlockAisle}
-        onFailRobot={handleFailRobot}
-        onReset={handleReset}
-        onShowToast={showToast}
-      />
-
-      {/* 9. Storage Racks Modal */}
-      <StorageRacksModal
-        isOpen={isStorageRacksOpen}
-        onClose={() => setIsStorageRacksOpen(false)}
-      />
-
-      {/* 10. Charging Bays Modal */}
-      <ChargingBaysModal
-        isOpen={isChargingBaysOpen}
-        onClose={() => setIsChargingBaysOpen(false)}
-        robots={robots}
-      />
-
-      {/* 11. Docks & Pickups Modal */}
-      <DocksPickupsModal
-        isOpen={isDocksPickupsOpen}
-        onClose={() => setIsDocksPickupsOpen(false)}
-        onSpawnTask={() => setIsDispatchModalOpen(true)}
-      />
-
-      {/* Live Toast Floating Pill Alert */}
-      {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 bg-[#0f172a] text-white px-4 py-2.5 rounded-2xl shadow-2xl border border-slate-700 text-xs font-medium flex items-center gap-2.5 animate-in slide-in-from-bottom-2">
-          <div className="w-2 h-2 rounded-full bg-[#ff334b] animate-pulse flex-shrink-0" />
-          <span>{toastMessage}</span>
+              <div className="space-y-2 font-mono text-xs">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-between hover:bg-slate-100/60 transition-colors">
+                  <div className="flex items-center gap-2">
+                    <span className="text-emerald-700 font-bold">[CONSENSUS_AGREED]</span>
+                    <span className="text-slate-800">Task #T-1042 awarded to AMR-01 (Score: 14.2)</span>
+                  </div>
+                  <span className="text-slate-400 text-[10px]">10:48:12</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-between hover:bg-slate-100/60 transition-colors">
+                  <div className="flex items-center gap-2">
+                    <span className="text-blue-700 font-bold">[SPACETIME_RESERVED]</span>
+                    <span className="text-slate-800">AMR-01 claimed tokens [(4,2,0) → (5,2,1) → (6,2,2)]</span>
+                  </div>
+                  <span className="text-slate-400 text-[10px]">10:48:14</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-between hover:bg-slate-100/60 transition-colors">
+                  <div className="flex items-center gap-2">
+                    <span className="text-amber-700 font-bold">[PRIORITY_YIELD]</span>
+                    <span className="text-slate-800">AMR-02 yielded to AMR-01 at intersection (7,5). Replanned with A*.</span>
+                  </div>
+                  <span className="text-slate-400 text-[10px]">10:48:18</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
-      </div>
+      </section>
+
+      {/* ========================================================
+          5. TESTIMONIALS SECTION (Light Cards with Soft Gradients)
+          ======================================================== */}
+      <section className="py-20 sm:py-24 bg-white border-y border-[#e2e8f0]">
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-8">
+          <div className="text-center max-w-xl mx-auto mb-14">
+            <span className="text-xs font-bold text-[#ff334b] uppercase tracking-wider block mb-2">
+              Performance Validated
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
+              Trusted by automation and robotics leaders
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((t) => (
+              <div
+                key={t.name}
+                className="bg-[#fafbfc] rounded-[24px] border border-[#e2e8f0] p-6 sm:p-7 flex flex-col justify-between hover:shadow-md hover:border-slate-300 transition-all duration-300 hover:-translate-y-1"
+              >
+                <div>
+                  <div className="flex items-center gap-1 text-amber-500 mb-4">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium mb-6">
+                    &ldquo;{t.quote}&rdquo;
+                  </p>
+                </div>
+
+                <div>
+                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold mb-4 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{t.metric}</span>
+                  </div>
+                  <h4 className="text-xs font-bold text-slate-900">{t.name}</h4>
+                  <p className="text-[11px] text-slate-400 font-medium">{t.role} • {t.company}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          6. PRICING SECTION (Clean All-Light Cards, No Dark Background)
+          ======================================================== */}
+      <section id="pricing" className="py-20 sm:py-28 px-4 sm:px-8 max-w-[1360px] mx-auto">
+        <div className="text-center max-w-xl mx-auto mb-12">
+          <span className="text-xs font-bold text-[#ff334b] uppercase tracking-wider block mb-2">
+            Predictable Pricing
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-4">
+            Transparent plans for labs to commercial grids
+          </h2>
+
+          {/* Annual vs Monthly Toggle */}
+          <div className="inline-flex items-center p-1 rounded-full bg-white border border-[#e2e8f0] shadow-xs gap-1">
+            <button
+              onClick={() => setBillingCycle('monthly')}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                billingCycle === 'monthly'
+                  ? 'bg-slate-900 text-white'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingCycle('annual')}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                billingCycle === 'annual'
+                  ? 'bg-slate-900 text-white'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <span>Annual</span>
+              <span className="text-[9px] bg-[#ff334b] text-white px-1.5 py-0.2 rounded-full font-bold">
+                Save 20%
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {plans.map((p) => (
+            <div
+              key={p.name}
+              className={`rounded-[26px] p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 bg-white ${
+                p.highlighted
+                  ? 'border-2 border-[#ff334b] shadow-xl ring-4 ring-red-50'
+                  : 'border border-[#e2e8f0] shadow-sm hover:shadow-md'
+              }`}
+            >
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-slate-900">{p.name}</h3>
+                  {p.badge && (
+                    <span
+                      className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                        p.highlighted
+                          ? 'bg-red-50 text-[#ff334b] border border-red-200'
+                          : 'bg-slate-100 text-slate-700'
+                      }`}
+                    >
+                      {p.badge}
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-xs text-slate-500 mb-6 font-medium">
+                  {p.desc}
+                </p>
+
+                <div className="flex items-baseline gap-1 mb-6">
+                  <span className="text-3xl sm:text-4xl font-extrabold font-mono tracking-tight text-slate-900">
+                    {p.price}
+                  </span>
+                  <span className="text-xs text-slate-500">
+                    {p.period}
+                  </span>
+                </div>
+
+                <div className="space-y-2.5 mb-8 text-xs font-medium text-slate-700">
+                  {p.features.map((f) => (
+                    <div key={f} className="flex items-center gap-2.5">
+                      <Check className={`w-4 h-4 flex-shrink-0 ${p.highlighted ? 'text-[#ff334b]' : 'text-emerald-600'}`} />
+                      <span>{f}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <Link
+                href="/"
+                className={`w-full py-3 rounded-xl text-xs font-bold text-center transition-all ${
+                  p.highlighted
+                    ? 'bg-[#ff334b] hover:bg-[#e02438] text-white shadow-md active:scale-95'
+                    : 'bg-slate-900 hover:bg-slate-800 text-white shadow-xs active:scale-95'
+                }`}
+              >
+                {p.cta}
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ========================================================
+          7. FAQ ACCORDION SECTION
+          ======================================================== */}
+      <section id="faq" className="py-20 bg-white border-y border-[#e2e8f0]">
+        <div className="max-w-[860px] mx-auto px-4 sm:px-8">
+          <div className="text-center mb-12">
+            <span className="text-xs font-bold text-[#ff334b] uppercase tracking-wider block mb-2">
+              Frequently Asked Questions
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+              Technical details &amp; architecture specifications
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {faqs.map((faq, idx) => {
+              const isExpanded = activeFaq === idx;
+              return (
+                <div
+                  key={faq.q}
+                  className="rounded-2xl border border-[#e2e8f0] bg-[#fafbfc] overflow-hidden transition-all duration-200 hover:border-slate-300"
+                >
+                  <button
+                    onClick={() => setActiveFaq(isExpanded ? null : idx)}
+                    className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-3 text-xs sm:text-sm font-bold text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer"
+                  >
+                    <span>{faq.q}</span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                        isExpanded ? 'rotate-180 text-slate-900' : ''
+                      }`}
+                    />
+                  </button>
+
+                  {isExpanded && (
+                    <div className="px-4 sm:px-5 pb-5 text-xs text-slate-600 leading-relaxed font-medium border-t border-slate-100 pt-3 animate-in fade-in duration-200">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          8. HIGH-CONVERSION CTA BANNER (CLEAN LIGHT AESTHETIC, NO DARK SCREEN)
+          ======================================================== */}
+      <section className="py-20 px-4 sm:px-8 max-w-[1360px] mx-auto">
+        <div className="relative rounded-[32px] bg-gradient-to-br from-white via-red-50/40 to-slate-50 border-2 border-red-200/80 p-8 sm:p-14 overflow-hidden shadow-lg flex flex-col items-center text-center">
+          {/* Soft ambient blur accents */}
+          <div className="absolute top-0 right-1/4 w-72 h-72 bg-[#ff334b]/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 max-w-xl mx-auto space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-red-200 text-xs font-semibold text-slate-800 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-[#ff334b] animate-ping" />
+              <span>Zero-Deadlock Multi-Robot Logistics</span>
+            </div>
+
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
+              Ready to coordinate your autonomous AMR fleet?
+            </h2>
+
+            <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+              Launch the live interactive simulation with 3 AMRs (PS Spec), test space-time corridor reservations, and inject simulated aisle blockages.
+            </p>
+
+            <div className="pt-4 flex items-center justify-center gap-3 flex-wrap">
+              <Link
+                href="/dashboard"
+                className="px-6 py-3 rounded-full bg-[#ff334b] hover:bg-[#e02438] text-white text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 flex items-center gap-2 hover:gap-3"
+              >
+                <span>Launch Fleet Dashboard</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/login"
+                className="px-5 py-3 rounded-full bg-white hover:bg-slate-50 text-slate-800 text-xs sm:text-sm font-bold transition-all border border-slate-300 shadow-2xs"
+              >
+                Sign In to Console
+              </Link>
+              <a
+                href="https://github.com/prateekfx7/Synroai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-3 rounded-full bg-white hover:bg-slate-50 text-slate-800 text-xs sm:text-sm font-bold transition-all border border-slate-300 shadow-2xs flex items-center gap-2"
+              >
+                <GithubIcon className="w-4 h-4 text-slate-800" />
+                <span>Star on GitHub</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          9. FOOTER (Clean Light)
+          ======================================================== */}
+      <footer className="bg-white border-t border-[#e2e8f0] py-12 px-4 sm:px-8">
+        <div className="max-w-[1360px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-slate-500">
+          <div className="flex items-center gap-3">
+            <SynroLogo variant="badge" size="sm" />
+            <div>
+              <p className="font-bold text-slate-900">Synro AI Technologies</p>
+              <p className="text-[11px] text-slate-400">Autonomous AMR Fleet Coordination &amp; Space-Time Routing</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-6 font-medium">
+            <Link href="/dashboard" className="hover:text-slate-900 transition-colors">Fleet Console</Link>
+            <Link href="/login" className="hover:text-slate-900 transition-colors">Operator Login</Link>
+            <a href="#features" className="hover:text-slate-900 transition-colors">Features</a>
+            <a href="#pricing" className="hover:text-slate-900 transition-colors">Pricing</a>
+            <a href="#faq" className="hover:text-slate-900 transition-colors">FAQ</a>
+            <a
+              href="https://github.com/prateekfx7/Synroai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-slate-900 transition-colors flex items-center gap-1.5 font-bold text-slate-700"
+            >
+              <GithubIcon className="w-3.5 h-3.5" />
+              <span>GitHub</span>
+            </a>
+          </div>
+
+          <div className="text-right text-[11px] text-slate-400 font-mono">
+            <span>© 2026 Synro. PS Spec v2.4 Verified.</span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

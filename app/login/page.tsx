@@ -53,17 +53,17 @@ export default function LoginPage() {
       if (res.success && res.user) {
         setSuccessToast(`Welcome back, ${res.user.name}! Opening Synro workspace...`);
         setTimeout(() => {
-          router.push('/');
+          router.push('/dashboard');
         }, 600);
       } else {
         // Fallback default login
         setSuccessToast('Connecting to Synro AMR workspace...');
         setTimeout(() => {
-          router.push('/');
+          router.push('/dashboard');
         }, 600);
       }
     } catch (err: any) {
-      router.push('/');
+      router.push('/dashboard');
     }
   };
 
