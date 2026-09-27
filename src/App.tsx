@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ArrowRight,
   Check,
@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Star,
   Sparkles,
+  CheckCircle2,
 } from 'lucide-react';
 
 // Exact SVG Logo component
@@ -34,6 +35,19 @@ export default function App() {
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('annual');
   const [activeTabScreenshot, setActiveTabScreenshot] = useState<'grid' | 'telemetry' | 'consensus'>('grid');
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Track scroll progress for sleek top indicator
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalScroll > 0) {
+        setScrollProgress(window.scrollY / totalScroll);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navLinks = [
     { label: 'Features', href: '#features' },
@@ -155,7 +169,7 @@ export default function App() {
       desc: 'Full decentralized fleet deployment with disruption recovery and analytics.',
       price: billingCycle === 'annual' ? '$450' : '$550',
       period: '/mo',
-      badge: 'Most Popular',
+      badge: 'Recommended',
       features: [
         'Up to 12 Active AMRs (Scalable)',
         'Full Dynamic Yielding & Deadlock Resolution',
@@ -210,9 +224,15 @@ export default function App() {
   ];
 
   return (
-    <div className="relative min-h-screen bg-[#f0f0ee] text-slate-900 font-sans antialiased selection:bg-[#ff334b] selection:text-white">
+    <div className="relative min-h-screen bg-[#f0f0ee] text-slate-900 font-sans antialiased selection:bg-[#ff334b] selection:text-white scroll-smooth">
+      {/* Sleek Top Scroll Progress Indicator */}
+      <div
+        className="fixed top-0 left-0 right-0 h-1 bg-[#ff334b] z-50 origin-left transition-transform duration-100 ease-out"
+        style={{ transform: `scaleX(${scrollProgress})` }}
+      />
+
       {/* ========================================================
-          1. HERO SECTION (Exact Video Background & Pill Header)
+          1. HERO SECTION
           ======================================================== */}
       <section className="relative min-h-screen overflow-hidden bg-[#f0f0ee] flex flex-col justify-between">
         {/* Fullscreen Autoplaying Background Video */}
@@ -228,10 +248,10 @@ export default function App() {
         {/* Foreground Content */}
         <div className="relative z-10 flex flex-col min-h-screen">
           {/* Centered Pill-Style Navbar */}
-          <nav className="flex items-center justify-center pt-4 sm:pt-6 px-4 sm:px-8 gap-2 sm:gap-3">
+          <nav className="flex items-center justify-center pt-4 sm:pt-6 px-4 sm:px-8 gap-2 sm:gap-3 animate-in fade-in slide-in-from-top-4 duration-700">
             {/* Left Circular Logo Container */}
             <div
-              className="flex items-center justify-center rounded-full w-10 h-10 sm:w-11 sm:h-11 shrink-0 cursor-pointer shadow-xs"
+              className="flex items-center justify-center rounded-full w-10 h-10 sm:w-11 sm:h-11 shrink-0 cursor-pointer shadow-xs hover:shadow-md transition-all duration-300 hover:scale-110 active:scale-95"
               style={{ backgroundColor: '#EDEDED' }}
               title="Logo"
             >
@@ -240,36 +260,38 @@ export default function App() {
 
             {/* Right Pill Container */}
             <div
-              className="flex items-center gap-3 sm:gap-8 rounded-xl px-4 sm:px-8 py-2.5 sm:py-3 shadow-xs"
+              className="flex items-center gap-3 sm:gap-8 rounded-xl px-4 sm:px-8 py-2.5 sm:py-3 shadow-xs hover:shadow-md transition-shadow"
               style={{ backgroundColor: '#EDEDED' }}
             >
               {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-[12px] sm:text-[14px] font-medium text-gray-700 hover:text-gray-900 transition-colors duration-200"
+                  className="text-[12px] sm:text-[14px] font-medium text-gray-700 hover:text-gray-950 transition-colors duration-200 relative group"
                 >
-                  {link.label}
+                  <span>{link.label}</span>
+                  <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-[#ff334b] transition-all duration-200 group-hover:w-full" />
                 </a>
               ))}
               <a
                 href="#pricing"
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#0f172a] text-white text-xs font-semibold hover:bg-slate-800 transition-colors shadow-2xs"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-300 text-slate-900 text-xs font-semibold hover:border-slate-400 hover:bg-slate-50 transition-all shadow-2xs group"
               >
                 <span>Console</span>
-                <ArrowRight className="w-3 h-3" />
+                <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
               </a>
             </div>
           </nav>
 
           {/* Hero Content (Bottom-Left Aligned) */}
           <div className="flex-1 flex items-end pb-10 sm:pb-16 lg:pb-20 px-6 sm:px-12 md:px-20 lg:px-28">
-            <div className="max-w-md sm:max-w-lg">
+            <div className="max-w-md sm:max-w-lg space-y-3 animate-in fade-in slide-in-from-bottom-6 duration-1000">
               {/* 1. Badge Link */}
               <a
                 href="#features"
-                className="inline-flex items-center gap-1.5 text-[11.5px] font-medium text-blue-500 hover:text-blue-600 transition-colors mb-3 group"
+                className="inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-blue-600 hover:text-blue-700 transition-colors group px-3 py-1 rounded-full bg-white/80 backdrop-blur-md border border-blue-200 shadow-2xs"
               >
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping" />
                 <span>Seen on Shark Tank in India • Synro AMR Multi-Agent Core</span>
                 <span className="inline-block transition-transform duration-200 group-hover:translate-x-0.5">
                   →
@@ -277,20 +299,20 @@ export default function App() {
               </a>
 
               {/* 2. Headline */}
-              <h1 className="text-[1.5rem] sm:text-[2rem] md:text-[2.25rem] leading-[1.12] font-bold text-gray-900 tracking-tight mb-3">
+              <h1 className="text-[1.5rem] sm:text-[2rem] md:text-[2.25rem] leading-[1.15] font-bold text-gray-900 tracking-tight">
                 Simple, smart multi-robot routing made for autonomous logistics.
               </h1>
 
               {/* 3. Subtext */}
-              <p className="text-[13px] sm:text-[14px] text-gray-500 font-normal mb-4 leading-relaxed">
+              <p className="text-[13px] sm:text-[14px] text-gray-600 font-normal leading-relaxed">
                 Decentralized task allocation, A* space-time reservation, and zero-deadlock priority yielding. Reclaim your warehouse throughput now.
               </p>
 
               {/* 4. Action Buttons */}
-              <div className="flex items-center gap-3 flex-wrap">
+              <div className="pt-2 flex items-center gap-3 flex-wrap">
                 <a
                   href="#pricing"
-                  className="inline-flex items-center gap-2 text-[13px] font-medium text-blue-500 border border-blue-400 rounded-full px-5 py-2.5 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all duration-200 group shadow-xs bg-white/40 backdrop-blur-xs"
+                  className="inline-flex items-center gap-2 text-[13px] font-medium text-white bg-[#ff334b] hover:bg-[#eb283f] rounded-full px-5 py-2.5 transition-all duration-200 group shadow-sm hover:shadow-md active:scale-95"
                 >
                   <span>Launch Live Fleet Console</span>
                   <span className="inline-block transition-transform duration-200 group-hover:translate-x-0.5">
@@ -300,10 +322,10 @@ export default function App() {
 
                 <a
                   href="#how-it-works"
-                  className="inline-flex items-center gap-1.5 text-[13px] font-medium text-slate-700 hover:text-slate-900 px-4 py-2.5 rounded-full hover:bg-white/60 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-[13px] font-medium text-slate-700 hover:text-slate-900 px-4 py-2.5 rounded-full bg-white/80 hover:bg-white backdrop-blur-xs transition-all border border-slate-200 shadow-2xs"
                 >
                   <span>Explore Architecture</span>
-                  <ChevronDown className="w-3.5 h-3.5" />
+                  <ChevronDown className="w-3.5 h-3.5 animate-bounce" />
                 </a>
               </div>
             </div>
@@ -312,11 +334,11 @@ export default function App() {
       </section>
 
       {/* ========================================================
-          2. FEATURES SECTION
+          2. FEATURES SECTION (Clean Light Cards)
           ======================================================== */}
       <section id="features" className="py-20 sm:py-28 px-4 sm:px-8 max-w-[1360px] mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-[#ff334b] text-xs font-bold mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-[#ff334b] text-xs font-bold mb-3 shadow-2xs">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Decentralized Autonomous Architecture</span>
           </div>
@@ -334,14 +356,14 @@ export default function App() {
             return (
               <div
                 key={feat.title}
-                className="bg-white rounded-[24px] border border-[#e2e8f0] p-6 shadow-sm hover:shadow-md hover:border-slate-300 transition-all group flex flex-col justify-between"
+                className="bg-white rounded-[24px] border border-[#e2e8f0] p-6 shadow-sm hover:shadow-xl hover:border-slate-300 transition-all duration-300 hover:-translate-y-1.5 group flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-800 group-hover:bg-[#0f172a] group-hover:text-white transition-colors shadow-2xs">
-                      <Icon className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-700 group-hover:bg-[#ff334b] group-hover:text-white transition-colors duration-300 shadow-2xs">
+                      <Icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
                     </div>
-                    <span className="text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200/60 text-slate-600">
+                    <span className="text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200 text-slate-600">
                       {feat.tag}
                     </span>
                   </div>
@@ -355,8 +377,11 @@ export default function App() {
                 </div>
 
                 <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400 font-semibold">
-                  <span>Zero Single-Point-of-Failure</span>
-                  <span className="text-slate-900">Active Mesh</span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    Zero Single-Point-of-Failure
+                  </span>
+                  <span className="text-slate-800 font-bold group-hover:translate-x-1 transition-transform">Active Mesh →</span>
                 </div>
               </div>
             );
@@ -365,9 +390,9 @@ export default function App() {
       </section>
 
       {/* ========================================================
-          3. HOW IT WORKS
+          3. HOW IT WORKS (Light Sequence Cards)
           ======================================================== */}
-      <section id="how-it-works" className="py-20 bg-white border-y border-[#e2e8f0]">
+      <section id="how-it-works" className="py-20 sm:py-24 bg-white border-y border-[#e2e8f0]">
         <div className="max-w-[1360px] mx-auto px-4 sm:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-14">
             <div>
@@ -387,14 +412,14 @@ export default function App() {
             {steps.map((s, idx) => (
               <div
                 key={s.step}
-                className="relative p-6 rounded-[22px] bg-[#fafbfc] border border-[#e2e8f0] flex flex-col justify-between"
+                className="relative p-6 rounded-[22px] bg-[#fafbfc] border border-[#e2e8f0] hover:border-slate-300 hover:shadow-md transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-black text-slate-300 font-mono">
+                    <span className="text-2xl font-black text-slate-300 group-hover:text-[#ff334b] transition-colors font-mono">
                       {s.step}
                     </span>
-                    <span className="w-2 h-2 rounded-full bg-[#ff334b]" />
+                    <span className="w-2 h-2 rounded-full bg-[#ff334b] group-hover:scale-125 transition-transform" />
                   </div>
                   <h3 className="text-sm font-bold text-slate-900 mb-2">
                     {s.title}
@@ -406,31 +431,31 @@ export default function App() {
 
                 <div className="mt-6 pt-3 border-t border-slate-200/60 flex items-center justify-between text-[10px] font-mono text-slate-400">
                   <span>Phase {idx + 1}</span>
-                  <span>Deterministic</span>
+                  <span className="text-emerald-600 font-semibold">Deterministic</span>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Formula Callout Banner */}
-          <div className="mt-10 p-5 rounded-[22px] bg-[#0f172a] text-white flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+          {/* Light Formula Banner */}
+          <div className="mt-10 p-5 rounded-[22px] bg-gradient-to-r from-red-50/90 via-white to-slate-50 border border-red-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#ff334b] flex items-center justify-center font-bold text-white text-sm flex-shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-[#ff334b] flex items-center justify-center font-bold text-white text-sm flex-shrink-0 shadow-xs">
                 f(x)
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
                   Planned System Specification Formula
                 </p>
-                <p className="text-sm sm:text-base font-mono font-bold text-emerald-300 mt-0.5">
-                  Priority = urgency + waiting time + battery risk
+                <p className="text-sm sm:text-base font-mono font-bold text-slate-900 mt-0.5">
+                  Priority = <span className="text-[#ff334b]">urgency</span> + <span className="text-blue-600">waiting time</span> + <span className="text-amber-600">battery risk</span>
                 </p>
               </div>
             </div>
 
             <a
               href="#showcase"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-slate-900 text-xs font-bold hover:bg-slate-100 transition-colors whitespace-nowrap self-start md:self-auto"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs self-start md:self-auto hover:gap-3"
             >
               <span>Explore Fleet Grid</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -440,7 +465,7 @@ export default function App() {
       </section>
 
       {/* ========================================================
-          4. SCREENSHOTS & INTERACTIVE PRODUCT SHOWCASE
+          4. SCREENSHOTS & SHOWCASE (Light Blueprint Floor Grid)
           ======================================================== */}
       <section id="showcase" className="py-20 sm:py-28 px-4 sm:px-8 max-w-[1360px] mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-12">
@@ -460,7 +485,7 @@ export default function App() {
               onClick={() => setActiveTabScreenshot('grid')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                 activeTabScreenshot === 'grid'
-                  ? 'bg-[#0f172a] text-white shadow-xs'
+                  ? 'bg-slate-900 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -470,7 +495,7 @@ export default function App() {
               onClick={() => setActiveTabScreenshot('telemetry')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                 activeTabScreenshot === 'telemetry'
-                  ? 'bg-[#0f172a] text-white shadow-xs'
+                  ? 'bg-slate-900 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -480,7 +505,7 @@ export default function App() {
               onClick={() => setActiveTabScreenshot('consensus')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                 activeTabScreenshot === 'consensus'
-                  ? 'bg-[#0f172a] text-white shadow-xs'
+                  ? 'bg-slate-900 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -489,13 +514,13 @@ export default function App() {
           </div>
         </div>
 
-        {/* Display Container */}
-        <div className="bg-white rounded-[28px] border border-[#e2e8f0] p-4 sm:p-8 shadow-sm">
+        {/* Display Container with Clean Light Blueprint */}
+        <div className="bg-white rounded-[28px] border border-[#e2e8f0] p-4 sm:p-8 shadow-sm transition-all duration-300 hover:shadow-md">
           {activeTabScreenshot === 'grid' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-xs font-bold text-slate-900">
                     Active 18×12 Obstacle Grid &amp; Space-Time A* Paths
                   </span>
@@ -505,9 +530,9 @@ export default function App() {
                 </span>
               </div>
 
-              {/* Grid Mockup */}
-              <div className="bg-slate-950 rounded-2xl p-6 text-white font-mono text-xs overflow-hidden relative">
-                <div className="grid grid-cols-9 sm:grid-cols-18 gap-1.5 opacity-90">
+              {/* Light Blueprint Grid */}
+              <div className="bg-[#f8fafc] rounded-2xl border border-slate-200 p-6 font-mono text-xs overflow-hidden relative">
+                <div className="grid grid-cols-9 sm:grid-cols-18 gap-1.5">
                   {Array.from({ length: 72 }).map((_, i) => {
                     const isRobot = i === 12 || i === 33 || i === 58;
                     const isReserved = i === 13 || i === 14 || i === 32 || i === 57;
@@ -515,14 +540,14 @@ export default function App() {
                     return (
                       <div
                         key={i}
-                        className={`h-7 sm:h-9 rounded-md flex items-center justify-center text-[10px] font-bold transition-all ${
+                        className={`h-7 sm:h-9 rounded-md flex items-center justify-center text-[10px] font-bold transition-all duration-200 ${
                           isRobot
-                            ? 'bg-[#ff334b] text-white shadow-[0_0_12px_rgba(255,51,75,0.6)]'
+                            ? 'bg-[#ff334b] text-white shadow-sm ring-2 ring-red-200 animate-pulse'
                             : isReserved
-                            ? 'bg-blue-500/30 border border-blue-400 text-blue-300'
+                            ? 'bg-blue-100 border border-blue-300 text-blue-700'
                             : isShelf
-                            ? 'bg-slate-800 text-slate-500'
-                            : 'bg-slate-900/80 border border-slate-800/80 text-slate-600'
+                            ? 'bg-slate-200 text-slate-500 border border-slate-300/80'
+                            : 'bg-white border border-slate-200 text-slate-400 hover:border-slate-300'
                         }`}
                       >
                         {isRobot ? 'AMR' : isReserved ? 'A*' : isShelf ? '■' : '·'}
@@ -531,9 +556,9 @@ export default function App() {
                   })}
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+                <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
                   <span>Legend: [AMR] Active Unit • [A*] Reserved Space-Time Cell • [■] Rack Shelf</span>
-                  <span className="text-emerald-400 font-bold">Zero Deadlocks Detected</span>
+                  <span className="text-emerald-600 font-bold">Zero Deadlocks Detected</span>
                 </div>
               </div>
             </div>
@@ -545,7 +570,7 @@ export default function App() {
                 <span className="text-xs font-bold text-slate-900">
                   Fleet Telemetry &amp; Battery State
                 </span>
-                <span className="text-[11px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                <span className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                   3 AMRs Online (PS Spec)
                 </span>
               </div>
@@ -563,7 +588,7 @@ export default function App() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-slate-700">
-                    <tr>
+                    <tr className="hover:bg-slate-50 transition-colors">
                       <td className="py-3 px-3 font-bold text-slate-900">AMR-01 (Orion)</td>
                       <td className="py-3 px-3"><span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-[10px]">Moving</span></td>
                       <td className="py-3 px-3 font-mono">(4, 2) → (12, 8)</td>
@@ -571,7 +596,7 @@ export default function App() {
                       <td className="py-3 px-3 font-mono font-bold">14.2</td>
                       <td className="py-3 px-3 text-slate-500">A* Pathfinding</td>
                     </tr>
-                    <tr>
+                    <tr className="hover:bg-slate-50 transition-colors">
                       <td className="py-3 px-3 font-bold text-slate-900">AMR-02 (Titan)</td>
                       <td className="py-3 px-3"><span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-semibold text-[10px]">Yielding</span></td>
                       <td className="py-3 px-3 font-mono">(7, 5) Standby</td>
@@ -579,7 +604,7 @@ export default function App() {
                       <td className="py-3 px-3 font-mono font-bold">11.8</td>
                       <td className="py-3 px-3 text-slate-500">A* Yield Replan</td>
                     </tr>
-                    <tr>
+                    <tr className="hover:bg-slate-50 transition-colors">
                       <td className="py-3 px-3 font-bold text-slate-900">AMR-03 (Nova)</td>
                       <td className="py-3 px-3"><span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-semibold text-[10px]">Loading</span></td>
                       <td className="py-3 px-3 font-mono">(15, 10) Dock 2</td>
@@ -605,24 +630,24 @@ export default function App() {
               </div>
 
               <div className="space-y-2 font-mono text-xs">
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-between hover:bg-slate-100/60 transition-colors">
                   <div className="flex items-center gap-2">
-                    <span className="text-emerald-600 font-bold">[CONSENSUS_AGREED]</span>
-                    <span>Task #T-1042 awarded to AMR-01 (Score: 14.2)</span>
+                    <span className="text-emerald-700 font-bold">[CONSENSUS_AGREED]</span>
+                    <span className="text-slate-800">Task #T-1042 awarded to AMR-01 (Score: 14.2)</span>
                   </div>
                   <span className="text-slate-400 text-[10px]">10:48:12</span>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-between hover:bg-slate-100/60 transition-colors">
                   <div className="flex items-center gap-2">
-                    <span className="text-blue-600 font-bold">[SPACETIME_RESERVED]</span>
-                    <span>AMR-01 claimed tokens [(4,2,0) → (5,2,1) → (6,2,2)]</span>
+                    <span className="text-blue-700 font-bold">[SPACETIME_RESERVED]</span>
+                    <span className="text-slate-800">AMR-01 claimed tokens [(4,2,0) → (5,2,1) → (6,2,2)]</span>
                   </div>
                   <span className="text-slate-400 text-[10px]">10:48:14</span>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-between hover:bg-slate-100/60 transition-colors">
                   <div className="flex items-center gap-2">
-                    <span className="text-amber-600 font-bold">[PRIORITY_YIELD]</span>
-                    <span>AMR-02 yielded to AMR-01 at intersection (7,5). Replanned with A*.</span>
+                    <span className="text-amber-700 font-bold">[PRIORITY_YIELD]</span>
+                    <span className="text-slate-800">AMR-02 yielded to AMR-01 at intersection (7,5). Replanned with A*.</span>
                   </div>
                   <span className="text-slate-400 text-[10px]">10:48:18</span>
                 </div>
@@ -635,7 +660,7 @@ export default function App() {
       {/* ========================================================
           5. TESTIMONIALS SECTION
           ======================================================== */}
-      <section className="py-20 bg-white border-y border-[#e2e8f0]">
+      <section className="py-20 sm:py-24 bg-white border-y border-[#e2e8f0]">
         <div className="max-w-[1360px] mx-auto px-4 sm:px-8">
           <div className="text-center max-w-xl mx-auto mb-14">
             <span className="text-xs font-bold text-[#ff334b] uppercase tracking-wider block mb-2">
@@ -650,7 +675,7 @@ export default function App() {
             {testimonials.map((t) => (
               <div
                 key={t.name}
-                className="bg-[#fafbfc] rounded-[24px] border border-[#e2e8f0] p-6 sm:p-7 flex flex-col justify-between"
+                className="bg-[#fafbfc] rounded-[24px] border border-[#e2e8f0] p-6 sm:p-7 flex flex-col justify-between hover:shadow-md hover:border-slate-300 transition-all duration-300 hover:-translate-y-1"
               >
                 <div>
                   <div className="flex items-center gap-1 text-amber-500 mb-4">
@@ -664,8 +689,9 @@ export default function App() {
                 </div>
 
                 <div>
-                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold mb-4">
-                    ✓ {t.metric}
+                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold mb-4 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{t.metric}</span>
                   </div>
                   <h4 className="text-xs font-bold text-slate-900">{t.name}</h4>
                   <p className="text-[11px] text-slate-400 font-medium">{t.role} • {t.company}</p>
@@ -677,7 +703,7 @@ export default function App() {
       </section>
 
       {/* ========================================================
-          6. PRICING & DEPLOYMENT PLANS
+          6. PRICING SECTION (Clean Light Cards, No Dark Screen)
           ======================================================== */}
       <section id="pricing" className="py-20 sm:py-28 px-4 sm:px-8 max-w-[1360px] mx-auto">
         <div className="text-center max-w-xl mx-auto mb-12">
@@ -694,7 +720,7 @@ export default function App() {
               onClick={() => setBillingCycle('monthly')}
               className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 billingCycle === 'monthly'
-                  ? 'bg-[#0f172a] text-white'
+                  ? 'bg-slate-900 text-white'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -704,7 +730,7 @@ export default function App() {
               onClick={() => setBillingCycle('annual')}
               className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
                 billingCycle === 'annual'
-                  ? 'bg-[#0f172a] text-white'
+                  ? 'bg-slate-900 text-white'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -720,20 +746,20 @@ export default function App() {
           {plans.map((p) => (
             <div
               key={p.name}
-              className={`rounded-[26px] p-6 sm:p-8 flex flex-col justify-between transition-all ${
+              className={`rounded-[26px] p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 bg-white ${
                 p.highlighted
-                  ? 'bg-[#0f172a] text-white shadow-xl ring-2 ring-[#ff334b]'
-                  : 'bg-white border border-[#e2e8f0] text-slate-900 shadow-sm'
+                  ? 'border-2 border-[#ff334b] shadow-xl ring-4 ring-red-50'
+                  : 'border border-[#e2e8f0] shadow-sm hover:shadow-md'
               }`}
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold">{p.name}</h3>
+                  <h3 className="text-lg font-bold text-slate-900">{p.name}</h3>
                   {p.badge && (
                     <span
                       className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                         p.highlighted
-                          ? 'bg-[#ff334b] text-white'
+                          ? 'bg-red-50 text-[#ff334b] border border-red-200'
                           : 'bg-slate-100 text-slate-700'
                       }`}
                     >
@@ -742,20 +768,20 @@ export default function App() {
                   )}
                 </div>
 
-                <p className={`text-xs mb-6 font-medium ${p.highlighted ? 'text-slate-400' : 'text-slate-500'}`}>
+                <p className="text-xs text-slate-500 mb-6 font-medium">
                   {p.desc}
                 </p>
 
                 <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-3xl sm:text-4xl font-extrabold font-mono tracking-tight">
+                  <span className="text-3xl sm:text-4xl font-extrabold font-mono tracking-tight text-slate-900">
                     {p.price}
                   </span>
-                  <span className={`text-xs ${p.highlighted ? 'text-slate-400' : 'text-slate-500'}`}>
+                  <span className="text-xs text-slate-500">
                     {p.period}
                   </span>
                 </div>
 
-                <div className="space-y-2.5 mb-8 text-xs font-medium">
+                <div className="space-y-2.5 mb-8 text-xs font-medium text-slate-700">
                   {p.features.map((f) => (
                     <div key={f} className="flex items-center gap-2.5">
                       <Check className={`w-4 h-4 flex-shrink-0 ${p.highlighted ? 'text-[#ff334b]' : 'text-emerald-600'}`} />
@@ -769,8 +795,8 @@ export default function App() {
                 href="#pricing"
                 className={`w-full py-3 rounded-xl text-xs font-bold text-center transition-all ${
                   p.highlighted
-                    ? 'bg-[#ff334b] hover:bg-[#e02438] text-white shadow-md'
-                    : 'bg-slate-900 hover:bg-slate-800 text-white'
+                    ? 'bg-[#ff334b] hover:bg-[#e02438] text-white shadow-md active:scale-95'
+                    : 'bg-slate-900 hover:bg-slate-800 text-white shadow-xs active:scale-95'
                 }`}
               >
                 {p.cta}
@@ -800,7 +826,7 @@ export default function App() {
               return (
                 <div
                   key={faq.q}
-                  className="rounded-2xl border border-[#e2e8f0] bg-[#fafbfc] overflow-hidden transition-all"
+                  className="rounded-2xl border border-[#e2e8f0] bg-[#fafbfc] overflow-hidden transition-all duration-200 hover:border-slate-300"
                 >
                   <button
                     onClick={() => setActiveFaq(isExpanded ? null : idx)}
@@ -808,14 +834,14 @@ export default function App() {
                   >
                     <span>{faq.q}</span>
                     <ChevronDown
-                      className={`w-4 h-4 text-slate-400 transition-transform ${
+                      className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
                         isExpanded ? 'rotate-180 text-slate-900' : ''
                       }`}
                     />
                   </button>
 
                   {isExpanded && (
-                    <div className="px-4 sm:px-5 pb-5 text-xs text-slate-600 leading-relaxed font-medium border-t border-slate-100 pt-3">
+                    <div className="px-4 sm:px-5 pb-5 text-xs text-slate-600 leading-relaxed font-medium border-t border-slate-100 pt-3 animate-in fade-in duration-200">
                       {faq.a}
                     </div>
                   )}
@@ -827,31 +853,31 @@ export default function App() {
       </section>
 
       {/* ========================================================
-          8. HIGH-CONVERSION CLOSING CTA BANNER
+          8. HIGH-CONVERSION CTA BANNER (CLEAN LIGHT AESTHETIC)
           ======================================================== */}
       <section className="py-20 px-4 sm:px-8 max-w-[1360px] mx-auto">
-        <div className="relative rounded-[32px] bg-[#0f172a] text-white p-8 sm:p-14 overflow-hidden shadow-2xl flex flex-col items-center text-center">
-          <div className="absolute top-0 right-1/4 w-80 h-80 bg-[#ff334b]/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative rounded-[32px] bg-gradient-to-br from-white via-red-50/40 to-slate-50 border-2 border-red-200/80 p-8 sm:p-14 overflow-hidden shadow-lg flex flex-col items-center text-center">
+          <div className="absolute top-0 right-1/4 w-72 h-72 bg-[#ff334b]/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 max-w-xl mx-auto space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-semibold backdrop-blur-xs">
-              <span className="w-2 h-2 rounded-full bg-[#ff334b] animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-red-200 text-xs font-semibold text-slate-800 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-[#ff334b] animate-ping" />
               <span>Zero-Deadlock Multi-Robot Logistics</span>
             </div>
 
-            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
               Ready to coordinate your autonomous AMR fleet?
             </h2>
 
-            <p className="text-xs sm:text-sm text-slate-400 font-medium leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
               Launch the live interactive simulation with 3 AMRs (PS Spec), test space-time corridor reservations, and inject simulated aisle blockages.
             </p>
 
             <div className="pt-4 flex items-center justify-center gap-3 flex-wrap">
               <a
                 href="#pricing"
-                className="px-6 py-3 rounded-full bg-[#ff334b] hover:bg-[#e02438] text-white text-xs sm:text-sm font-bold shadow-lg transition-all active:scale-95 flex items-center gap-2"
+                className="px-6 py-3 rounded-full bg-[#ff334b] hover:bg-[#e02438] text-white text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 flex items-center gap-2 hover:gap-3"
               >
                 <span>Deploy Autonomous Fleet</span>
                 <ArrowRight className="w-4 h-4" />
@@ -862,7 +888,7 @@ export default function App() {
       </section>
 
       {/* ========================================================
-          9. FOOTER
+          9. FOOTER (Clean Light)
           ======================================================== */}
       <footer className="bg-white border-t border-[#e2e8f0] py-12 px-4 sm:px-8">
         <div className="max-w-[1360px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-slate-500">
