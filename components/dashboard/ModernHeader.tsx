@@ -137,7 +137,7 @@ export const ModernHeader: React.FC<ModernHeaderProps> = ({
             className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-[#ff334b] hover:bg-[#eb283f] text-white text-xs font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>+ New</span>
+            <span>New</span>
           </button>
 
           {/* Search Icon Circle */}
