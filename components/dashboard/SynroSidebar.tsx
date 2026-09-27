@@ -251,6 +251,19 @@ export const SynroSidebar: React.FC<SynroSidebarProps> = ({
                 </span>
               </button>
             )}
+
+            <Link
+              href="/landing"
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <Sparkles className="w-4 h-4 text-blue-500" />
+                <span>Hero Landing Page</span>
+              </div>
+              <span className="text-[10px] text-blue-600 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded font-bold">
+                Live
+              </span>
+            </Link>
           </div>
 
           {/* ================= 5. FOOTER: OPERATOR PROFILE CARD ================= */}
