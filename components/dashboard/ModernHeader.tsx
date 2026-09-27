@@ -57,17 +57,12 @@ export const ModernHeader: React.FC<ModernHeaderProps> = ({
             )}
           </button>
 
-          {/* Official Synro Logo Mark */}
-          <div className="flex items-center gap-2 cursor-pointer">
-            <SynroLogo
-              variant="badge"
-              size="md"
-              title="Synro Autonomous Fleet System"
-            />
-            <div className="hidden sm:block">
-              <SynroLogo variant="full" size="sm" />
-            </div>
-          </div>
+          {/* Official Synro Logo Mark Badge */}
+          <SynroLogo
+            variant="badge"
+            size="md"
+            title="Synro Autonomous Fleet System"
+          />
 
           {/* Dark Workspace / Operator Pill matching image [ ::: Shahzaib ] */}
           <button

@@ -140,11 +140,10 @@ export const SynroSidebar: React.FC<SynroSidebarProps> = ({
             {/* Synro Brand Logo */}
             <div
               onClick={() => handleSelectTab('overview')}
-              className="flex items-center gap-2.5 cursor-pointer group"
+              className="flex items-center cursor-pointer group"
               title="Synro Autonomous Fleet System"
             >
-              <SynroLogo variant="badge" size="sm" />
-              <SynroLogo variant="full" size="sm" />
+              <SynroLogo variant="full" size="md" />
             </div>
 
             {/* Close / Collapse Button */}
