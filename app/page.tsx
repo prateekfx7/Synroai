@@ -52,6 +52,36 @@ export default function LandingPage() {
   const [isSimulatingPacket, setIsSimulatingPacket] = useState(false);
   const [packetStep, setPacketStep] = useState(0);
   const [wordIdx, setWordIdx] = useState(0);
+  const [introState, setIntroState] = useState<'calibrating' | 'ready' | 'hidden'>('calibrating');
+  const [calibrationPercent, setCalibrationPercent] = useState(0);
+
+  // Opening entrance animation sequence on initial page load
+  useEffect(() => {
+    const stepTimer = setInterval(() => {
+      setCalibrationPercent((prev) => {
+        if (prev >= 100) {
+          clearInterval(stepTimer);
+          return 100;
+        }
+        const jump = Math.floor(Math.random() * 20) + 14;
+        return Math.min(prev + jump, 100);
+      });
+    }, 110);
+
+    const readyTimer = setTimeout(() => {
+      setIntroState('ready');
+    }, 1100);
+
+    const hideTimer = setTimeout(() => {
+      setIntroState('hidden');
+    }, 1750);
+
+    return () => {
+      clearInterval(stepTimer);
+      clearTimeout(readyTimer);
+      clearTimeout(hideTimer);
+    };
+  }, []);
 
   const rotatingWords = [
     'autonomous logistics.',
@@ -311,12 +341,71 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="relative min-h-screen bg-[#f0f0ee] text-slate-900 font-sans antialiased selection:bg-[#ff334b] selection:text-white scroll-smooth">
+    <div className="relative min-h-screen bg-[#f0f0ee] text-slate-900 font-sans antialiased selection:bg-[#ff334b] selection:text-white scroll-smooth overflow-x-hidden">
       {/* Sleek Top Scroll Progress Indicator */}
       <div
         className="fixed top-0 left-0 right-0 h-1 bg-[#ff334b] z-50 origin-left transition-transform duration-100 ease-out"
         style={{ transform: `scaleX(${scrollProgress})` }}
       />
+
+      {/* ========================================================
+          OPENING ENTRANCE INTRO ANIMATION OVERLAY
+          ======================================================== */}
+      {introState !== 'hidden' && (
+        <div
+          className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#f0f0ee] transition-all duration-700 ease-out ${
+            introState === 'ready'
+              ? 'opacity-0 scale-105 pointer-events-none filter blur-sm'
+              : 'opacity-100 scale-100'
+          }`}
+        >
+          {/* Subtle Ambient Radial Glows */}
+          <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-[#ff334b]/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
+          <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Central Logo & Sonar Radar Rings */}
+          <div className="relative flex flex-col items-center z-10 text-center px-4">
+            <div className="relative mb-6">
+              {/* Expanding Sonar Ping Ring */}
+              <div className="absolute -inset-4 rounded-3xl bg-[#ff334b]/20 animate-ping duration-1000" />
+              <div className="absolute -inset-8 rounded-3xl border border-[#ff334b]/30 animate-pulse" />
+
+              {/* Central Badge */}
+              <div className="relative w-16 h-16 rounded-2xl bg-[#ff334b] flex items-center justify-center shadow-xl shadow-red-500/20 transform transition-transform duration-500 hover:scale-105">
+                <SynroLogo variant="mark" color="light" size="md" />
+              </div>
+            </div>
+
+            {/* Title & Status */}
+            <div className="space-y-1.5 mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-slate-800 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#ff334b] animate-ping" />
+                <span>SYNRO MULTI-AGENT SWARM v2.4</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                Calibrating 4D Space-Time Grid
+              </h2>
+              <p className="text-xs text-slate-500 font-medium font-mono">
+                Decentralized P2P Consensus • Resolving Corridor Tokens
+              </p>
+            </div>
+
+            {/* High-Precision Progress Bar */}
+            <div className="w-64 max-w-xs space-y-2">
+              <div className="w-full h-1.5 bg-slate-200/80 rounded-full overflow-hidden p-0.5 shadow-inner">
+                <div
+                  className="h-full bg-gradient-to-r from-[#ff334b] to-red-400 rounded-full transition-all duration-150 ease-out shadow-xs"
+                  style={{ width: `${calibrationPercent}%` }}
+                />
+              </div>
+              <div className="flex items-center justify-between text-[10px] font-mono font-bold text-slate-400">
+                <span>SYSTEM_BOOT</span>
+                <span className="text-slate-800">{calibrationPercent}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ========================================================
           1. HERO SECTION (Video Background with Clean Light Overlays)
@@ -328,14 +417,22 @@ export default function LandingPage() {
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+          className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-out ${
+            introState === 'calibrating'
+              ? 'scale-110 filter blur-md opacity-40'
+              : 'scale-100 filter-none opacity-100'
+          }`}
           src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4"
         />
 
         {/* Foreground Content */}
         <div className="relative z-10 flex flex-col min-h-screen">
           {/* Centered Pill-Style Navbar with Hover Animations */}
-          <nav className="flex items-center justify-center pt-4 sm:pt-6 px-4 sm:px-8 gap-2 sm:gap-3 animate-in fade-in slide-in-from-top-4 duration-700">
+          <nav className={`flex items-center justify-center pt-4 sm:pt-6 px-4 sm:px-8 gap-2 sm:gap-3 transition-all duration-700 ease-out ${
+            introState === 'calibrating'
+              ? '-translate-y-12 opacity-0'
+              : 'translate-y-0 opacity-100'
+          }`}>
             {/* Left Circular Logo Container */}
             <Link
               href="/"
@@ -386,7 +483,11 @@ export default function LandingPage() {
 
           {/* Hero Content (Bottom-Left Aligned with Staggered Fade-in) */}
           <div className="flex-1 flex items-end pb-10 sm:pb-16 lg:pb-20 px-6 sm:px-12 md:px-20 lg:px-28">
-            <div className="max-w-md sm:max-w-lg space-y-3 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+            <div className={`max-w-md sm:max-w-lg space-y-3 transition-all duration-800 delay-150 ease-out ${
+              introState === 'calibrating'
+                ? 'translate-y-12 opacity-0'
+                : 'translate-y-0 opacity-100'
+            }`}>
               {/* 1. Badge Link */}
               <a
                 href="#features"
