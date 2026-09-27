@@ -83,8 +83,7 @@ export default function LoginPage() {
           <div>
             {/* Top Brand & Workspace Header matching screenshot */}
             <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <SynroLogo variant="badge" size="md" />
+              <div className="flex items-center">
                 <SynroLogo variant="full" size="md" />
               </div>
 
