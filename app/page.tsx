@@ -311,7 +311,7 @@ export default function LandingPage() {
                 className="inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-blue-600 hover:text-blue-700 transition-colors group px-3 py-1 rounded-full bg-white/80 backdrop-blur-md border border-blue-200 shadow-2xs"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping" />
-                <span>Seen on Shark Tank India • Synro AMR Multi-Agent Core</span>
+                <span>Next-Gen Multi-Agent Logistics • Zero-Deadlock AMR Mesh</span>
                 <span className="inline-block transition-transform duration-200 group-hover:translate-x-0.5">
                   →
                 </span>
